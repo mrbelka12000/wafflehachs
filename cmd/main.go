@@ -4,13 +4,12 @@ import (
 	"os"
 	"wafflehacks/internal/app"
 	"wafflehacks/internal/server"
-	"wafflehacks/tools"
 
 	"go.uber.org/zap"
 )
 
 func main() {
-	tools.Loadenv()
+	// tools.Loadenv()
 	logger, err := zap.NewDevelopment()
 	if err != nil {
 		return
