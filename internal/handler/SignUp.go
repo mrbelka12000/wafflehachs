@@ -56,7 +56,7 @@ func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-	  default:
+	default:
 		SendErrorResponse(w, "Неизвестный тип регистрации", 400)
 		h.log.Debug("Неизвестный тип регистрации")
 		return

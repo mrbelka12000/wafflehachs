@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"wafflehacks/entities/usertypes"
 	"wafflehacks/models"
 
 	"go.uber.org/zap"
@@ -17,7 +18,13 @@ func newClient(db *sql.DB, log *zap.SugaredLogger) *ClientRepo {
 }
 
 func (cr *ClientRepo) SignUp(client *models.Client) (*models.Client, *models.ErrorResponse) {
-	err := cr.db.QueryRow(`
+	tx, err := cr.db.Begin()
+	if err != nil {
+		return nil, &models.ErrorResponse{ErrorMessage: "Не удалось подготовить транзакцию", ErrorCode: 500}
+	}
+	defer tx.Commit()
+
+	err = tx.QueryRow(`
 	INSERT INTO Clients
 		(Firstname, Lastname, Nickname, Email , Password,Age)
 	VALUES
@@ -26,11 +33,21 @@ func (cr *ClientRepo) SignUp(client *models.Client) (*models.Client, *models.Err
 		id;`,
 		client.Firstname, client.Lastname, client.Username, client.Email, client.Password, client.Age).Scan(&client.ID)
 	if err != nil {
+		tx.Rollback()
 		cr.log.Debug("Не удалось создать психолога по причине: " + err.Error())
 		return nil, &models.ErrorResponse{ErrorMessage: "Не удалось зарегстрироваться, попробуйте ввести другой адрес или ник", ErrorCode: 400}
 	}
 
-
-	
+	_, err = tx.Exec(`
+	INSERT INTO Usertype
+		(email, role)
+	VALUES
+		($1,$2)
+	`, client.Email, usertypes.Client)
+	if err != nil {
+		tx.Rollback()
+		cr.log.Debug("Не удалось создать психолога по причине: " + err.Error())
+		return nil, &models.ErrorResponse{ErrorMessage: "Адрес электронной почты занят", ErrorCode: 400}
+	}
 	return client, nil
 }

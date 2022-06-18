@@ -31,3 +31,8 @@ type ErrorResponse struct {
 	ErrorMessage string `json:"errorMessage"`
 	ErrorCode    int    `json:"errorCode"`
 }
+
+type SessionResponse struct {
+	ID     int    `json:"id"`
+	Cookie string `json:"cookie"`
+}
