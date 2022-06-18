@@ -26,7 +26,7 @@ func (pr *PsychologistRepo) SignUp(psycho *models.Psychologist) (*models.Psychol
 
 	err = tx.QueryRow(`
 	INSERT INTO Psychologists
-		(Firstname, Lastname, Nickname, Email , Password,Age)
+		(Firstname, Lastname, Username, Email , Password,Age)
 	VALUES
 		($1,$2,$3,$4,$5,$6)
 	RETURNING
@@ -51,4 +51,47 @@ func (pr *PsychologistRepo) SignUp(psycho *models.Psychologist) (*models.Psychol
 	}
 
 	return psycho, nil
+}
+
+func (pr *PsychologistRepo) GetAll() ([]models.Psychologist, *models.ErrorResponse) {
+	psychos := []models.Psychologist{}
+	rows, err := pr.db.Query(`
+	SELECT 
+		id, firstname, lastname, username, avatarurl, age
+	FROM 
+		psychologists
+	`)
+	if err != nil {
+		pr.log.Debug("Ошибка получения: " + err.Error())
+		return nil, &models.ErrorResponse{ErrorMessage: "Не удалось получить список", ErrorCode: 500}
+	}
+
+	for rows.Next() {
+		avatarUrl := sql.NullString{}
+
+		psycho := models.Psychologist{}
+		if err := rows.Scan(&psycho.ID, &psycho.Firstname, &psycho.Lastname, &psycho.Username, &avatarUrl, &psycho.Age); err != nil {
+			pr.log.Debug("Ошибка при получении данных психолога: " + err.Error())
+			continue
+		}
+
+		var avgRate float64
+		err = pr.db.QueryRow(`
+		SELECT
+			AVG(rate)
+		FROM
+			psychorate
+		WHERE
+			psychoID=$1
+		`, psycho.ID).Scan(&avgRate)
+		if err != nil {
+			pr.log.Debug("Не удалось посчитать средний рейтинг психолога")
+			continue
+		}
+
+		psycho.Rate = avgRate
+		psycho.AvatarUrl = avatarUrl.String
+		psychos = append(psychos, psycho)
+	}
+	return psychos, nil
 }

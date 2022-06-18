@@ -13,6 +13,6 @@ func SetUpMux(h *handler.Handler) *mux.Router {
 	r.HandleFunc("/api/signup", h.SignUp).Methods(http.MethodPost)
 	r.HandleFunc("/api/signin", nil).Methods(http.MethodPost)
 
-	r.HandleFunc("/api/main", nil).Methods(http.MethodPost)
+	r.HandleFunc("/api/main", h.MainPage).Methods(http.MethodPost)
 	return r
 }
