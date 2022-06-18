@@ -2,18 +2,18 @@ package repository
 
 import (
 	"database/sql"
-	"wafflehacks/models"
 	m "wafflehacks/models"
 
 	"go.uber.org/zap"
 )
 
 type Psychologist interface {
-	SignUp(psycho *m.Psychologist) (*m.Psychologist, *models.ErrorResponse)
+	SignUp(psycho *m.Psychologist) (*m.Psychologist, *m.ErrorResponse)
+	GetAll() ([]m.Psychologist, *m.ErrorResponse)
 }
 
 type Client interface {
-	SignUp(client *m.Client) (*m.Client, *models.ErrorResponse)
+	SignUp(client *m.Client) (*m.Client, *m.ErrorResponse)
 }
 
 type User interface {

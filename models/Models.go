@@ -8,6 +8,7 @@ type User struct {
 	Email     string  `json:"email"`
 	Password  *string `json:"password,omitempty"`
 	Age       int     `json:"age"`
+	AvatarUrl string  `json:"avataruUrl"`
 }
 
 type Client struct {
@@ -17,7 +18,8 @@ type Client struct {
 type Psychologist struct {
 	User
 	BusyMode string   `json:"busyMode"`
-	Reviews  []Review `json:"reviews"`
+	Rate     float64  `json:"rate"`
+	Reviews  []Review `json:"reviews,omitempty"`
 }
 
 type Review struct {

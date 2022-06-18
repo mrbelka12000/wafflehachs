@@ -26,7 +26,7 @@ func (cr *ClientRepo) SignUp(client *models.Client) (*models.Client, *models.Err
 
 	err = tx.QueryRow(`
 	INSERT INTO Clients
-		(Firstname, Lastname, Nickname, Email , Password,Age)
+		(Firstname, Lastname, username, Email , Password,Age)
 	VALUES
 		($1,$2,$3,$4,$5,$6)
 	RETURNING

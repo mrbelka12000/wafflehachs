@@ -44,3 +44,7 @@ func (ps *PsychoService) SignUp(psycho *models.Psychologist) (*models.Psychologi
 	}
 	return ps.repo.Psychologist.SignUp(psycho)
 }
+
+func (ps *PsychoService) GetAll() ([]models.Psychologist, *models.ErrorResponse) {
+	return ps.repo.GetAll()
+}

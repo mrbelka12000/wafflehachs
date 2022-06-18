@@ -7,6 +7,8 @@ import (
 )
 
 func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	subject := r.FormValue("subject")
 	switch subject {
 	case "client":
