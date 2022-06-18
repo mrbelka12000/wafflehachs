@@ -17,7 +17,7 @@ type Client interface {
 }
 
 type User interface {
-	GetType(email string) (string, *m.ErrorResponse)
+	GetUser(email *m.User) (*m.User, *m.ErrorResponse)
 }
 
 type Service struct {

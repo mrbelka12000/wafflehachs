@@ -13,7 +13,3 @@ func (cli *ClientSignInRequest) Build() *models.User {
 		Password: &cli.Password,
 	}
 }
-
-// func (cli *ClientSignInRequest) Validate() error {
-
-// }

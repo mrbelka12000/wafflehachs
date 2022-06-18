@@ -17,7 +17,8 @@ type Client interface {
 }
 
 type User interface {
-	GetType(email string) (string, *m.ErrorResponse)
+	// GetType(email string) (string, *m.ErrorResponse)
+	GetUser(user *m.User) (*m.User, *m.ErrorResponse)
 }
 
 type Repository struct {
