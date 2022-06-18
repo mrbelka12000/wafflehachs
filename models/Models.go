@@ -16,8 +16,9 @@ type Client struct {
 
 type Psychologist struct {
 	User
-	BusyMode string   `json:"busyMode"`
-	Reviews  []Review `json:"reviews"`
+	Description string   `json:"description"`
+	BusyMode    string   `json:"busyMode"`
+	Reviews     []Review `json:"reviews"`
 }
 
 type Review struct {

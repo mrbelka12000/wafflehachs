@@ -52,3 +52,9 @@ func (pr *PsychologistRepo) SignUp(psycho *models.Psychologist) (*models.Psychol
 
 	return psycho, nil
 }
+
+func (pr *PsychologistRepo) GetAll() ([]*models.Psychologist, *models.ErrorResponse) {
+	psychos := []*models.Psychologist{}
+
+	return psychos, nil
+}
