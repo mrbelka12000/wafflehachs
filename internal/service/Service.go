@@ -31,5 +31,5 @@ func NewService(repo *repository.Repository, log *zap.SugaredLogger) *Service {
 		Psychologist: newPsycho(repo, log),
 		Client:       newClient(repo, log),
 		User:         newUser(repo, log),
-	}
+	}         
 }

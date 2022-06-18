@@ -19,7 +19,7 @@ func main() {
 	defer log.Sync()
 	handler, err := app.Initialize(log)
 	if err != nil {
-		log.Fatal("Error while conecting to postgres: ", err)
+		log.Debug("Error while conecting to postgres: ", err)
 	}
 	srv := server.NewServer(handler)
 	log.Info("Server started on port: " + os.Getenv("Port"))
