@@ -1,8 +1,9 @@
 package main
 
 import (
-	"fmt"
-	"wafflehacks/database"
+	"os"
+	"wafflehacks/internal/app"
+	"wafflehacks/internal/server"
 	"wafflehacks/tools"
 
 	"go.uber.org/zap"
@@ -14,13 +15,13 @@ func main() {
 	if err != nil {
 		return
 	}
-	sugar := logger.Sugar()
-	//nolint
-	defer sugar.Sync()
-
-	db, err := database.GetConnection()
+	log := logger.Sugar()
+	defer log.Sync()
+	handler, err := app.Initialize(log)
 	if err != nil {
-		sugar.Fatalf(err.Error())
+		log.Fatal("Error while conecting to postgres: ", err)
 	}
-	fmt.Println("starting wafflehacks", db)
+	srv := server.NewServer(handler)
+	log.Info("Server started on port: " + os.Getenv("Port"))
+	log.Fatal(srv.ListenAndServe())
 }

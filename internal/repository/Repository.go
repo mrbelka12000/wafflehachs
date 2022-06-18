@@ -2,26 +2,28 @@ package repository
 
 import (
 	"database/sql"
+	"wafflehacks/models"
+	m "wafflehacks/models"
 
 	"go.uber.org/zap"
 )
 
-type Psychologyst interface {
-	SignUp()
+type Psychologist interface {
+	SignUp(psycho *m.Psychologist) (*m.Psychologist, *models.ErrorResponse)
 }
 
 type Client interface {
-	SignUp()
+	SignUp(client *m.Client) (*m.Client, *models.ErrorResponse)
 }
 
 type Repository struct {
-	Psychologyst
+	Psychologist
 	Client
 }
 
 func NewRepo(db *sql.DB, log *zap.SugaredLogger) *Repository {
 	return &Repository{
-		Psychologyst: NewPsycho(db, log),
-		Client:       NewClient(db, log),
+		Psychologist: newPsycho(db, log),
+		Client:       newClient(db, log),
 	}
 }

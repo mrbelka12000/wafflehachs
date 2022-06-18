@@ -1,10 +1,14 @@
 package tools
 
 import (
+	"bytes"
+	"encoding/json"
 	"io/ioutil"
 	"log"
 	"os"
 	"strings"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 func Loadenv(files ...string) {
@@ -34,4 +38,23 @@ func alseitov(files ...string) {
 			}
 		}
 	}
+}
+
+func MakeJsonString(value interface{}) string {
+	if value == nil {
+		return "{}"
+	}
+	bf := bytes.NewBufferString("")
+	e := json.NewEncoder(bf)
+	e.SetEscapeHTML(false)
+	e.Encode(value)
+	return bf.String()
+}
+
+func GetPointerString(value string) *string {
+	return &value
+}
+
+func GetRandomString() string {
+	return uuid.NewV4().String()
 }
