@@ -1,21 +1,44 @@
-package handler
+package storage
 
-// const (
-// 	projectID  = "gcp-storage-353811" // FILL IN WITH YOURS
-// 	bucketName = "wafflehacksbucket"  // FILL IN WITH YOURS
+import (
+	"context"
+	"fmt"
+	"io"
+	"mime/multipart"
+	"os"
+	"time"
+
+	"cloud.google.com/go/storage"
+)
+
+const GoogleConfigFileName = "entities/storage/gcp-storage.json"
+
+// import (
+// 	"context"
+// 	"fmt"
+// 	"io"
+// 	"log"
+// 	"mime/multipart"
+// 	"net/http"
+// 	"os"
+// 	"time"
+// 	"wafflehacks/tools"
+
+// 	"cloud.google.com/go/storage"
+// 	"github.com/gin-gonic/gin"
 // )
 
-// type ClientUploader struct {
-// 	cl         *storage.Client
-// 	projectID  string
-// 	bucketName string
-// 	uploadPath string
-// }
+type ClientUploader struct {
+	cl         *storage.Client
+	projectID  string
+	bucketName string
+	uploadPath string
+}
 
 // var uploader *ClientUploader
 
 // func init() {
-// 	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", "gcp-storage-353811-065f9a465bfd.json") // FILL IN WITH YOUR FILE PATH
+// 	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", "check.json") // FILL IN WITH YOUR FILE PATH
 // 	client, err := storage.NewClient(context.Background())
 // 	if err != nil {
 // 		log.Fatalf("Failed to create client: %v", err)
@@ -97,23 +120,38 @@ package handler
 // 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 // }
 
-// // UploadFile uploads an object
-// func (c *ClientUploader) UploadFile(file multipart.File, object string) error {
-// 	ctx := context.Background()
+func getClient() *ClientUploader {
+	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", GoogleConfigFileName) // FILL IN WITH YOUR FILE PATH
+	client, err := storage.NewClient(context.Background())
+	if err != nil {
+		return nil
+	}
 
-// 	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
-// 	defer cancel()
+	return &ClientUploader{
+		cl:         client,
+		bucketName: os.Getenv("bucket"),
+		projectID:  os.Getenv("gcp-storage-353811"),
+		uploadPath: os.Getenv("uploadPath") + "/",
+	}
+}
 
-// 	// Upload an object with storage.Writer.
+// UploadFile uploads an object
+func UploadFile(file multipart.File, object string) error {
+	c := getClient()
+	ctx := context.Background()
 
-// 	wc := c.cl.Bucket(c.bucketName).Object(c.uploadPath + object).NewWriter(ctx)
-// 	if _, err := io.Copy(wc, file); err != nil {
-// 		return fmt.Errorf("io.Copy: %v", err)
-// 	}
-// 	fmt.Println(wc.Name)
-// 	if err := wc.Close(); err != nil {
-// 		return fmt.Errorf("Writer.Close: %v", err)
-// 	}
+	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
+	defer cancel()
 
-// 	return nil
-// }
+	// Upload an object with storage.Writer.
+
+	wc := c.cl.Bucket(c.bucketName).Object(c.uploadPath + object).NewWriter(ctx)
+	if _, err := io.Copy(wc, file); err != nil {
+		return fmt.Errorf("io.Copy: %v", err)
+	}
+	if err := wc.Close(); err != nil {
+		return fmt.Errorf("Writer.Close: %v", err)
+	}
+
+	return nil
+}

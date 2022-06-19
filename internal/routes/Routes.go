@@ -14,5 +14,6 @@ func SetUpMux(h *handler.Handler) *mux.Router {
 	r.HandleFunc("/api/signin", h.SignIn).Methods(http.MethodPost)
 
 	r.HandleFunc("/api/main", h.MainPage).Methods(http.MethodPost)
+	r.HandleFunc("/api/upload", h.Upload).Methods(http.MethodPost)
 	return r
 }
