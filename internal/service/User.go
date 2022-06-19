@@ -1,6 +1,7 @@
 package service
 
 import (
+	"os"
 	"wafflehacks/internal/repository"
 	"wafflehacks/models"
 
@@ -26,11 +27,11 @@ func (us *UserService) GetUser(user *models.User) (*models.User, *models.ErrorRe
 		us.log.Debug("user not found")
 		return nil, resp
 	}
-	err := bcrypt.CompareHashAndPassword([]byte(*user.Password), []byte(*u.Password))
-	if err != nil {
-		us.log.Debug("wrong password")
-		return nil, &models.ErrorResponse{ErrorMessage: "wrong password", ErrorCode: 400}
-	}
 
-	return u, nil
+	err := bcrypt.CompareHashAndPassword([]byte(*u.Password), []byte(*user.Password+os.Getenv("Salt")))
+	if err == nil {
+		return u, nil
+	}
+	us.log.Debug("wrong password")
+	return nil, &models.ErrorResponse{ErrorMessage: "wrong password", ErrorCode: 400}
 }

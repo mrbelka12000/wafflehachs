@@ -41,7 +41,7 @@ func (u *UserRepo) GetType(email string) (string, *models.ErrorResponse) {
 }
 
 func (u *UserRepo) GetUser(user *models.User) (*models.User, *models.ErrorResponse) {
-	var User *models.User
+	User := &models.User{}
 
 	role, resp := u.GetType(user.Email)
 	if resp != nil {
@@ -53,27 +53,27 @@ func (u *UserRepo) GetUser(user *models.User) (*models.User, *models.ErrorRespon
 	case usertypes.Client:
 		err := u.db.QueryRow(`
 		SELECT 
-			(Password)
+			id, Password
 		FROM
 			Clients
 		WHERE
 			Email = $1	
-		`, user.Email).Scan(&User.Password)
+		`, user.Email).Scan(&User.ID, &User.Password)
 		if err != nil {
-			u.log.Debug("email not found")
+			u.log.Debug("email not found : " + err.Error())
 			return nil, &models.ErrorResponse{ErrorMessage: "getUser failed", ErrorCode: 500}
 		}
 	case usertypes.Psycho:
 		err := u.db.QueryRow(`
 		SELECT 
-			(Password)
+			id,Password
 		FROM
 			Psychologists
 		WHERE
 			Email = $1	
-		`, user.Email).Scan(&User.Password)
+		`, user.Email).Scan(&User.ID, &User.Password)
 		if err != nil {
-			u.log.Debug("email not found")
+			u.log.Debug("email not found: " + err.Error())
 			return nil, &models.ErrorResponse{ErrorMessage: "getUser failed", ErrorCode: 500}
 		}
 	}

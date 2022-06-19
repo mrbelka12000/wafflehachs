@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	request "wafflehacks/entities/requests"
+	"wafflehacks/tools"
 )
 
 func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
@@ -23,6 +24,5 @@ func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 		SendErrorResponse(w, "not found", 400)
 		return
 	}
-
-	w.Write([]byte(user.Email))
+	w.Write([]byte(tools.MakeJsonString(user)))
 }
