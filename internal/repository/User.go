@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"wafflehacks/entities/usertypes"
 	"wafflehacks/models"
 
 	"go.uber.org/zap"
@@ -20,10 +21,10 @@ func newUser(db *sql.DB, log *zap.SugaredLogger) *UserRepo {
 	}
 }
 
-func (u *UserRepo) CanLogin(user *models.User) (*models.User, *models.ErrorResponse) {
+func (ur *UserRepo) CanLogin(user *models.User) (*models.User, *models.ErrorResponse) {
 	User := &models.User{}
 
-	err := u.db.QueryRow(`
+	err := ur.db.QueryRow(`
 		SELECT 
 			id, Password
 		FROM
@@ -32,9 +33,45 @@ func (u *UserRepo) CanLogin(user *models.User) (*models.User, *models.ErrorRespo
 			Email = $1	
 		`, user.Email).Scan(&User.ID, &User.Password)
 	if err != nil {
-		u.log.Debug("email not found : " + err.Error())
+		ur.log.Debug("email not found : " + err.Error())
 		return nil, &models.ErrorResponse{ErrorMessage: "getUser failed", ErrorCode: 500}
 	}
 
 	return User, nil
+}
+
+func (ur *UserRepo) SignUp(user *models.User) (*models.User, *models.ErrorResponse) {
+	tx, err := ur.db.Begin()
+	if err != nil {
+		return nil, &models.ErrorResponse{ErrorMessage: "Не удалось подготовить транзакцию", ErrorCode: 500}
+	}
+	defer tx.Commit()
+
+	err = tx.QueryRow(`
+	INSERT INTO users
+		(Firstname, Lastname, username, Email , Password,Age)
+	VALUES
+		($1,$2,$3,$4,$5,$6)
+	RETURNING
+		id;`,
+		user.Firstname, user.Lastname, user.Username, user.Email, user.Password, user.Age).Scan(&user.ID)
+	if err != nil {
+		tx.Rollback()
+		ur.log.Debug("Не удалось создать психолога по причине: " + err.Error())
+		return nil, &models.ErrorResponse{ErrorMessage: "Не удалось зарегстрироваться, попробуйте ввести другой адрес или ник", ErrorCode: 400}
+	}
+
+	_, err = tx.Exec(`
+	INSERT INTO Usertype
+		(email, role)
+	VALUES
+		($1,$2)
+	`, user.Email, usertypes.Client)
+	if err != nil {
+		tx.Rollback()
+		ur.log.Debug("Не удалось создать психолога по причине: " + err.Error())
+		return nil, &models.ErrorResponse{ErrorMessage: "Адрес электронной почты занят", ErrorCode: 400}
+	}
+
+	return user, nil
 }

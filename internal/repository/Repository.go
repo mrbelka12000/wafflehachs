@@ -8,16 +8,17 @@ import (
 )
 
 type Psychologist interface {
-	SignUp(psycho *m.Psychologist) (*m.Psychologist, *m.ErrorResponse)
+	SignUp(psychoId int) *m.ErrorResponse
 	GetAll() ([]m.Psychologist, *m.ErrorResponse)
 }
 
 type Client interface {
-	SignUp(client *m.Client) (*m.Client, *m.ErrorResponse)
+	SignUp(clientId int) *m.ErrorResponse
 }
 
 type User interface {
 	CanLogin(user *m.User) (*m.User, *m.ErrorResponse)
+	SignUp(user *m.User) (*m.User, *m.ErrorResponse)
 }
 
 type Repository struct {

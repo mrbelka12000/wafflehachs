@@ -3,17 +3,20 @@ package request
 import (
 	"errors"
 	"strings"
-	"wafflehacks/entities/busymode"
 	"wafflehacks/models"
 )
 
-type PsychoSignUpRequest struct {
-	CV string `json:"cv"`
-	ClientSignUpRequest
+type UserSignUpRequest struct {
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	UserName  string `json:"userName"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+	Age       int    `json:"age"`
 }
 
-func (sur *PsychoSignUpRequest) Build() *models.Psychologist {
-	user := models.User{
+func (sur *UserSignUpRequest) Build() *models.User {
+	return &models.User{
 		Firstname: sur.FirstName,
 		Lastname:  sur.LastName,
 		Username:  sur.UserName,
@@ -22,13 +25,9 @@ func (sur *PsychoSignUpRequest) Build() *models.Psychologist {
 		Age:       sur.Age,
 	}
 
-	return &models.Psychologist{
-		User:     user,
-		BusyMode: busymode.ActiveMode,
-	}
 }
 
-func (sur *PsychoSignUpRequest) Validate() error {
+func (sur *UserSignUpRequest) Validate() error {
 	text := ""
 	text = strings.Replace(sur.FirstName, "\r\n", " ", -1)
 	text = strings.Trim(text, " ")

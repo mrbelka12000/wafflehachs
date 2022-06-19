@@ -2,7 +2,6 @@ package repository
 
 import (
 	"database/sql"
-	"wafflehacks/entities/usertypes"
 	"wafflehacks/models"
 
 	"go.uber.org/zap"
@@ -17,52 +16,20 @@ func newPsycho(db *sql.DB, log *zap.SugaredLogger) *PsychologistRepo {
 	return &PsychologistRepo{db, log}
 }
 
-func (pr *PsychologistRepo) SignUp(psycho *models.Psychologist) (*models.Psychologist, *models.ErrorResponse) {
-	tx, err := pr.db.Begin()
-	if err != nil {
-		return nil, &models.ErrorResponse{ErrorMessage: "Не удалось подготовить транзакцию", ErrorCode: 500}
-	}
-	defer tx.Commit()
+func (pr *PsychologistRepo) SignUp(psychoId int) *models.ErrorResponse {
 
-	err = tx.QueryRow(`
-	INSERT INTO users
-		(Firstname, Lastname, Username, Email , Password,Age)
-	VALUES
-		($1,$2,$3,$4,$5,$6)
-	RETURNING
-		id;`,
-		psycho.Firstname, psycho.Lastname, psycho.Username, psycho.Email, psycho.Password, psycho.Age).Scan(&psycho.ID)
-	if err != nil {
-		tx.Rollback()
-		pr.log.Debug("Не удалось создать психолога по причине: " + err.Error())
-		return nil, &models.ErrorResponse{ErrorMessage: "Не удалось зарегстрироваться, попробуйте ввести другой адрес или ник", ErrorCode: 400}
-	}
-
-	_, err = tx.Exec(`
+	_, err := pr.db.Exec(`
 	INSERT INTO Psychologists
 		(id)
 	VALUES
 		($1)
-	`, psycho.ID)
+	`, psychoId)
 	if err != nil {
-		tx.Rollback()
 		pr.log.Debug("Не удалось создать психолога по причине: " + err.Error())
-		return nil, &models.ErrorResponse{ErrorMessage: "Не удалось зарегистрироваться", ErrorCode: 400}
+		return &models.ErrorResponse{ErrorMessage: "Не удалось зарегистрироваться", ErrorCode: 400}
 	}
 
-	_, err = tx.Exec(`
-	INSERT INTO Usertype
-		(email, role)
-	VALUES
-		($1,$2)
-	`, psycho.Email, usertypes.Psycho)
-	if err != nil {
-		tx.Rollback()
-		pr.log.Debug("Не удалось создать психолога по причине: " + err.Error())
-		return nil, &models.ErrorResponse{ErrorMessage: "Адрес электронной почты занят", ErrorCode: 400}
-	}
-
-	return psycho, nil
+	return nil
 }
 
 func (pr *PsychologistRepo) GetAll() ([]models.Psychologist, *models.ErrorResponse) {
