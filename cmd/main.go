@@ -25,7 +25,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	database.UpTables(db, log)
 	srv := app.Initialize(db, log)
 
 	done := make(chan os.Signal, 1)
