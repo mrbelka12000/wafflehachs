@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+
 	m "wafflehacks/models"
 
 	"go.uber.org/zap"
@@ -21,10 +22,15 @@ type User interface {
 	GetUser(user *m.User) (*m.User, *m.ErrorResponse)
 }
 
+type Session interface {
+	CreateSession(session *m.SessionResponse) *m.ErrorResponse
+}
+
 type Repository struct {
 	Psychologist
 	Client
 	User
+	Session
 }
 
 func NewRepo(db *sql.DB, log *zap.SugaredLogger) *Repository {
@@ -32,5 +38,6 @@ func NewRepo(db *sql.DB, log *zap.SugaredLogger) *Repository {
 		Psychologist: newPsycho(db, log),
 		Client:       newClient(db, log),
 		User:         newUser(db, log),
+		Session:      newSession(db, log),
 	}
 }

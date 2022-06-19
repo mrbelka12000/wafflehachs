@@ -3,7 +3,9 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+
 	request "wafflehacks/entities/requests"
+	"wafflehacks/models"
 	"wafflehacks/tools"
 )
 
@@ -24,5 +26,15 @@ func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 		SendErrorResponse(w, "not found", 400)
 		return
 	}
-	w.Write([]byte(tools.MakeJsonString(user)))
+
+	s := &models.SessionResponse{
+		ID:     user.ID,
+		Cookie: tools.GetRandomString(),
+	}
+
+	if err := h.srv.CreateSession(s); err != nil {
+		h.log.Debug("create session failed: " + err.ErrorMessage)
+		SendErrorResponse(w, err.ErrorMessage, err.ErrorCode)
+		return
+	}
 }

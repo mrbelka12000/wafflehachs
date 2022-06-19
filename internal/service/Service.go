@@ -20,10 +20,15 @@ type User interface {
 	GetUser(email *m.User) (*m.User, *m.ErrorResponse)
 }
 
+type Session interface {
+	CreateSession(session *m.SessionResponse) *m.ErrorResponse
+}
+
 type Service struct {
 	Psychologist
 	Client
 	User
+	Session
 }
 
 func NewService(repo *repository.Repository, log *zap.SugaredLogger) *Service {
@@ -31,5 +36,6 @@ func NewService(repo *repository.Repository, log *zap.SugaredLogger) *Service {
 		Psychologist: newPsycho(repo, log),
 		Client:       newClient(repo, log),
 		User:         newUser(repo, log),
-	}         
+		Session:      newSession(repo, log),
+	}
 }
