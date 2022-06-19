@@ -25,7 +25,7 @@ func (cr *ClientRepo) SignUp(client *models.Client) (*models.Client, *models.Err
 	defer tx.Commit()
 
 	err = tx.QueryRow(`
-	INSERT INTO Clients
+	INSERT INTO users
 		(Firstname, Lastname, username, Email , Password,Age)
 	VALUES
 		($1,$2,$3,$4,$5,$6)
@@ -36,6 +36,18 @@ func (cr *ClientRepo) SignUp(client *models.Client) (*models.Client, *models.Err
 		tx.Rollback()
 		cr.log.Debug("Не удалось создать психолога по причине: " + err.Error())
 		return nil, &models.ErrorResponse{ErrorMessage: "Не удалось зарегстрироваться, попробуйте ввести другой адрес или ник", ErrorCode: 400}
+	}
+
+	_, err = tx.Exec(`
+	INSERT INTO clients
+		(id)
+	VALUES
+		($1)
+	`, client.ID)
+	if err != nil {
+		tx.Rollback()
+		cr.log.Debug("Не удалось создать клиента по причине: " + err.Error())
+		return nil, &models.ErrorResponse{ErrorMessage: "Не удалось зарегистрироваться", ErrorCode: 400}
 	}
 
 	_, err = tx.Exec(`

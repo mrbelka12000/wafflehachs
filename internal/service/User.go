@@ -21,8 +21,8 @@ func newUser(repo *repository.Repository, log *zap.SugaredLogger) *UserService {
 	}
 }
 
-func (us *UserService) GetUser(user *models.User) (*models.User, *models.ErrorResponse) {
-	u, resp := us.repo.GetUser(user)
+func (us *UserService) CanLogin(user *models.User) (*models.User, *models.ErrorResponse) {
+	u, resp := us.repo.CanLogin(user)
 	if resp != nil {
 		us.log.Debug("user not found")
 		return nil, resp

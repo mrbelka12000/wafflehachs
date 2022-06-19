@@ -18,7 +18,7 @@ func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 
 	u := req.Build()
 
-	user, resp := h.srv.User.GetUser(u)
+	user, resp := h.srv.User.CanLogin(u)
 	if resp != nil {
 		h.log.Debug(resp)
 		SendErrorResponse(w, "not found", 400)

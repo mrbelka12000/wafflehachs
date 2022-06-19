@@ -17,7 +17,7 @@ type Client interface {
 }
 
 type User interface {
-	GetUser(email *m.User) (*m.User, *m.ErrorResponse)
+	CanLogin(email *m.User) (*m.User, *m.ErrorResponse)
 }
 
 type Service struct {
@@ -31,5 +31,5 @@ func NewService(repo *repository.Repository, log *zap.SugaredLogger) *Service {
 		Psychologist: newPsycho(repo, log),
 		Client:       newClient(repo, log),
 		User:         newUser(repo, log),
-	}         
+	}
 }

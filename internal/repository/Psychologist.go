@@ -25,7 +25,7 @@ func (pr *PsychologistRepo) SignUp(psycho *models.Psychologist) (*models.Psychol
 	defer tx.Commit()
 
 	err = tx.QueryRow(`
-	INSERT INTO Psychologists
+	INSERT INTO users
 		(Firstname, Lastname, Username, Email , Password,Age)
 	VALUES
 		($1,$2,$3,$4,$5,$6)
@@ -36,6 +36,18 @@ func (pr *PsychologistRepo) SignUp(psycho *models.Psychologist) (*models.Psychol
 		tx.Rollback()
 		pr.log.Debug("Не удалось создать психолога по причине: " + err.Error())
 		return nil, &models.ErrorResponse{ErrorMessage: "Не удалось зарегстрироваться, попробуйте ввести другой адрес или ник", ErrorCode: 400}
+	}
+
+	_, err = tx.Exec(`
+	INSERT INTO Psychologists
+		(id)
+	VALUES
+		($1)
+	`, psycho.ID)
+	if err != nil {
+		tx.Rollback()
+		pr.log.Debug("Не удалось создать психолога по причине: " + err.Error())
+		return nil, &models.ErrorResponse{ErrorMessage: "Не удалось зарегистрироваться", ErrorCode: 400}
 	}
 
 	_, err = tx.Exec(`
@@ -57,9 +69,11 @@ func (pr *PsychologistRepo) GetAll() ([]models.Psychologist, *models.ErrorRespon
 	psychos := []models.Psychologist{}
 	rows, err := pr.db.Query(`
 	SELECT 
-		id, firstname, lastname, username, avatarurl, age
+		users.id, users.firstname, users.lastname, users.username, users.avatarurl, users.age
 	FROM 
-		psychologists
+		Psychologists 
+	JOIN
+		users on users.id = Psychologists.id
 	`)
 	if err != nil {
 		pr.log.Debug("Ошибка получения: " + err.Error())
