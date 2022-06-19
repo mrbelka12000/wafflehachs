@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"mime/multipart"
@@ -38,6 +39,10 @@ func getClient() *ClientUploader {
 // UploadFile uploads an object
 func UploadFile(file multipart.File, object string) error {
 	c := getClient()
+	if c == nil {
+		return errors.New("не удалось получить клиента для загрузки файлов")
+	}
+
 	ctx := context.Background()
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
