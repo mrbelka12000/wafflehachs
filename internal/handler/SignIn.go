@@ -8,6 +8,8 @@ import (
 )
 
 func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	req := request.ClientSignInRequest{}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {

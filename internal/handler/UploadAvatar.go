@@ -12,18 +12,21 @@ func (h *Handler) Upload(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(500)
 		return
 	}
+
 	if err := r.ParseMultipartForm(10 << 20); err != nil {
 		SendErrorResponse(w, "Слишком большой файл", 400)
-		h.log.Debug("Файл слишком много весит")
+		h.log.Debug("Файл слишком много весит: " + err.Error())
 		return
 	}
+
 	file, handler, err := r.FormFile("avatar")
 	if err != nil {
 		SendErrorResponse(w, "Не удалось получить файл", 400)
 		h.log.Debug("Не удалось получить файл по причине: " + err.Error())
 		return
 	}
-	if handler.Size >= 20000000 {
+
+	if handler.Size >= 10<<20 {
 		SendErrorResponse(w, "Изображение весит больше чем положено, 20mb", 400)
 		h.log.Debug("Слишком большой файл")
 		return

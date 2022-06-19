@@ -27,7 +27,6 @@ func main() {
 	}
 	database.UpTables(db, log)
 	srv := app.Initialize(db, log)
-
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
