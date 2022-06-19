@@ -18,9 +18,14 @@ func GetConnection() (*sql.DB, error) {
 }
 
 func getConnectionString() string {
-	connStr := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable",
+	connStrForHeroku := os.Getenv("DATABASE_URL")
+	if connStrForHeroku != "" {
+		return connStrForHeroku
+	}
+
+	connStrForDocker := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=require",
 		os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PASSWORD"),
 		os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_PORT"),
 		os.Getenv("POSTGRES_DB"))
-	return connStr
+	return connStrForDocker
 }

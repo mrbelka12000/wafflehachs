@@ -13,10 +13,10 @@ import (
 func Initialize(log *zap.SugaredLogger) (*handler.Handler, error) {
 	db, err := database.GetConnection()
 	if err != nil {
-		// return nil, err
+		return nil, err
 	}
 
-	// database.UpTables(db, log)
+	database.UpTables(db, log)
 	db = &sql.DB{}
 	repo := repository.NewRepo(db, log)
 	srv := service.NewService(repo, log)

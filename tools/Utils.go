@@ -24,7 +24,8 @@ func alseitov(files ...string) {
 	for _, file := range files {
 		bytes, err := ioutil.ReadFile(file)
 		if err != nil {
-			log.Fatalf("error parsing file: %v", err.Error())
+			log.Printf("error parsing file: %v \n", err.Error())
+			continue
 		}
 		lines := strings.Split(string(bytes), "\n")
 		for i, line := range lines {

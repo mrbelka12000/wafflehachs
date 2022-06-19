@@ -4,12 +4,13 @@ import (
 	"os"
 	"wafflehacks/internal/app"
 	"wafflehacks/internal/server"
+	"wafflehacks/tools"
 
 	"go.uber.org/zap"
 )
 
 func main() {
-	// tools.Loadenv()
+	tools.Loadenv()
 	logger, err := zap.NewDevelopment()
 	if err != nil {
 		return
@@ -18,9 +19,9 @@ func main() {
 	defer log.Sync()
 	handler, err := app.Initialize(log)
 	if err != nil {
-		log.Debug("Error while conecting to postgres: ", err)
+		log.Fatal("Error while conecting to postgres: ", err)
 	}
 	srv := server.NewServer(handler)
-	log.Info("Server started on port: " + os.Getenv("Port"))
+	log.Info("Server started on port: " + os.Getenv("PORT"))
 	log.Fatal(srv.ListenAndServe())
 }
