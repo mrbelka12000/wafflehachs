@@ -8,16 +8,8 @@ import (
 )
 
 func (h *Handler) Upload(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
-		w.WriteHeader(500)
-		return
-	}
 
-	if err := r.ParseMultipartForm(10 << 20); err != nil {
-		SendErrorResponse(w, "Слишком большой файл", 400)
-		h.log.Debug("Файл слишком много весит: " + err.Error())
-		return
-	}
+	r.ParseMultipartForm(10 << 20)
 
 	file, handler, err := r.FormFile("avatar")
 	if err != nil {
