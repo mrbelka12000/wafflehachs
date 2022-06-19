@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"wafflehacks/entities/storage"
 	"wafflehacks/internal/handler"
 	"wafflehacks/internal/repository"
 	"wafflehacks/internal/server"
@@ -42,14 +41,14 @@ func init() {
 		os.Getenv("private_key"), os.Getenv("client_email"), os.Getenv("client_id"),
 		os.Getenv("auth_uri"), os.Getenv("token_uri"), os.Getenv("auth_provider_x509_cert_url"),
 		os.Getenv("client_x509_cert_url"))
-
-	file, err := os.Create(storage.GoogleConfigFileName)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	_, err = file.Write([]byte(res))
-	if err != nil {
-		log.Fatal(err)
-	}
+	log.Println(res)
+	//file, err := os.Create(storage.GoogleConfigFileName)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//
+	//_, err = file.Write([]byte(res))
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
 }
