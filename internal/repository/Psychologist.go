@@ -86,7 +86,6 @@ func (pr *PsychologistRepo) GetAll() ([]models.Psychologist, *models.ErrorRespon
 		`, psycho.ID).Scan(&avgRate)
 		if err != nil {
 			pr.log.Debug("Не удалось посчитать средний рейтинг психолога")
-			continue
 		}
 
 		psycho.Rate = avgRate
