@@ -1,7 +1,6 @@
 package app
 
 import (
-	"database/sql"
 	"wafflehacks/database"
 	"wafflehacks/internal/handler"
 	"wafflehacks/internal/repository"
@@ -17,7 +16,6 @@ func Initialize(log *zap.SugaredLogger) (*handler.Handler, error) {
 	}
 
 	database.UpTables(db, log)
-	db = &sql.DB{}
 	repo := repository.NewRepo(db, log)
 	srv := service.NewService(repo, log)
 	return handler.NewHandler(srv, log), nil

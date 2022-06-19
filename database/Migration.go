@@ -24,6 +24,8 @@ func UpTables(db *sql.DB, log *zap.SugaredLogger) {
 
 		if _, err = db.Exec(string(body)); err != nil {
 			log.Info(fmt.Sprintf("Миграция %v не может отработать по причине %v", file.Name(), err.Error()))
+			continue
 		}
+		log.Info(fmt.Sprintf("Миграция %v отработала успешно ", file.Name()))
 	}
 }
