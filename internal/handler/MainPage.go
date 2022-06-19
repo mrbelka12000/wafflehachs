@@ -1,12 +1,15 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"wafflehacks/tools"
 )
 
 func (h *Handler) MainPage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
+	fmt.Println("here")
 
 	psychos, resp := h.srv.GetAll()
 	if resp != nil {
