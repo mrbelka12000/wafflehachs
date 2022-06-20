@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
 	"mime/multipart"
 	"os"
 	"time"
@@ -50,15 +49,9 @@ func UploadFile(file multipart.File, object string) error {
 
 	// Upload an object with storage.Writer.
 
-	wc := c.cl.Bucket(c.bucketName).Object(c.uploadPath + object).NewWriter(ctx)
-	if _, err := io.Copy(wc, file); err != nil {
-		return fmt.Errorf("io.Copy: %v", err)
-	}
-	if err := wc.Close(); err != nil {
-		return fmt.Errorf("Writer.Close: %v", err)
-	}
+	err := c.cl.Bucket(c.bucketName).Object(c.uploadPath + object).Delete(context.Background())
 
-	return nil
+	return err
 }
 
 func DeleteFile(object string) error {
