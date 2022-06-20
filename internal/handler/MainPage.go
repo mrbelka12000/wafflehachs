@@ -11,7 +11,6 @@ func (h *Handler) MainPage(w http.ResponseWriter, r *http.Request) {
 	psychos, resp := h.srv.GetAll()
 	if resp != nil {
 		SendErrorResponse(w, resp.ErrorMessage, resp.ErrorCode)
-		h.log.Debug("Не удалось получить список психологов по причине: " + resp.ErrorMessage)
 		return
 	}
 

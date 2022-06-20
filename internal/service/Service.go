@@ -10,6 +10,7 @@ import (
 type Psychologist interface {
 	SignUp(psychoId int) *m.ErrorResponse
 	GetAll() ([]m.Psychologist, *m.ErrorResponse)
+	GetByUsername(username string) (*m.Psychologist, *m.ErrorResponse)
 }
 
 type Client interface {

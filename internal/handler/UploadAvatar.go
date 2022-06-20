@@ -54,11 +54,9 @@ func (h *Handler) Upload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	confirmSignUp := userConfirm.Build()
-
 	resp := h.srv.ContinueSignUp(confirmSignUp)
 	if resp != nil {
 		SendErrorResponse(w, resp.ErrorMessage, resp.ErrorCode)
-		h.log.Debug(resp.ErrorMessage)
 		return
 	}
 

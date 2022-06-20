@@ -21,3 +21,7 @@ func (ps *PsychoService) SignUp(psychoId int) *models.ErrorResponse {
 func (ps *PsychoService) GetAll() ([]models.Psychologist, *models.ErrorResponse) {
 	return ps.repo.GetAll()
 }
+
+func (ps *PsychoService) GetByUsername(username string) (*models.Psychologist, *models.ErrorResponse) {
+	return ps.repo.GetByUsername(username)
+}

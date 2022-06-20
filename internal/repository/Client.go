@@ -25,7 +25,7 @@ func (cr *ClientRepo) SignUp(clientId int) *models.ErrorResponse {
 		($1)
 	`, clientId)
 	if err != nil {
-		cr.log.Debug("Не удалось создать клиента по причине: " + err.Error())
+		cr.log.Error("Не удалось создать клиента по причине: " + err.Error())
 		return &models.ErrorResponse{ErrorMessage: "Не удалось зарегистрироваться", ErrorCode: 400}
 	}
 

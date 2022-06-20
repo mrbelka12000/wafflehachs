@@ -23,10 +23,10 @@ type Psychologist struct {
 }
 
 type Review struct {
-	ClientId       int    `json:"clientID"`
-	ClientUsername string `json:"clientUserName"`
-	Rating         int    `json:"Rating"`
-	Comment        string `json:"comment"`
+	User
+	Anonym  bool   `json:"anonym"`
+	Rating  int    `json:"Rating"`
+	Comment string `json:"comment"`
 }
 
 type ErrorResponse struct {

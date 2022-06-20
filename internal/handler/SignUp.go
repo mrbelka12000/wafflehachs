@@ -12,7 +12,6 @@ func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
 	userSignUpReq := &request.UserSignUpRequest{}
 	if err := json.NewDecoder(r.Body).Decode(&userSignUpReq); err != nil {
 		SendErrorResponse(w, "Ошибка дессириализации: "+err.Error(), 400)
-		h.log.Debug("Ошибка дессириализации: " + err.Error())
 		return
 	}
 	user := userSignUpReq.Build()
@@ -20,14 +19,12 @@ func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
 	subject := r.FormValue("subject")
 	if subject != "client" && subject != "psychologist" {
 		SendErrorResponse(w, "Неизвестный тип регистрации", 400)
-		h.log.Debug("Неизвестный тип регистрации")
 		return
 	}
 
 	user, resp := h.srv.User.SignUp(user)
 	if resp != nil {
 		SendErrorResponse(w, resp.ErrorMessage, resp.ErrorCode)
-		h.log.Debug(resp.ErrorMessage)
 		return
 	}
 	switch subject {
@@ -39,7 +36,6 @@ func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
 
 	if resp != nil {
 		SendErrorResponse(w, resp.ErrorMessage, resp.ErrorCode)
-		h.log.Debug(resp.ErrorMessage)
 		return
 	}
 

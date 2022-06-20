@@ -27,7 +27,7 @@ func newUser(repo *repository.Repository, log *zap.SugaredLogger) *UserService {
 func (us *UserService) CanLogin(user *models.User) (*models.User, *models.ErrorResponse) {
 	u, resp := us.repo.CanLogin(user)
 	if resp != nil {
-		us.log.Debug("user not found")
+		us.log.Error("user not found")
 		return nil, resp
 	}
 
@@ -35,7 +35,7 @@ func (us *UserService) CanLogin(user *models.User) (*models.User, *models.ErrorR
 	if err == nil {
 		return u, nil
 	}
-	us.log.Debug("wrong password")
+	us.log.Error("wrong password")
 	return nil, &models.ErrorResponse{ErrorMessage: "wrong password", ErrorCode: 400}
 }
 
