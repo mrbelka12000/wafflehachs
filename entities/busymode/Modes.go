@@ -1,8 +1,8 @@
 package busymode
 
 const (
-	BusyMode      = "Busy"
-	ActiveMode    = "Active"
-	OfflineMode   = "Offline"
-	InvisibleMode = "Invisible"
+	BusyMode      = "busy"
+	ActiveMode    = "active"
+	OfflineMode   = "offline"
+	InvisibleMode = "invisible"
 )
