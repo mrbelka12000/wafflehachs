@@ -78,3 +78,8 @@ func IsValidType(file multipart.File) (string, bool) {
 func GetStorageUrl(filename string) string {
 	return fmt.Sprintf("%v/%v/%v/%v", os.Getenv("googlestorage"), os.Getenv("bucket"), os.Getenv("uploadPath"), filename)
 }
+
+func GetFileNameFromUrl(fileUrl string) string {
+	parsedUrl := strings.Split(fileUrl, "/")
+	return parsedUrl[len(parsedUrl)-1]
+}

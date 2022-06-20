@@ -15,6 +15,7 @@ type UpdateUserRequest struct {
 	Description string
 	Age         int
 	AvatarUrl   string
+	HaveAvater  bool
 }
 
 func (uur *UpdateUserRequest) Build() *models.User {
@@ -51,6 +52,9 @@ func (uur *UpdateUserRequest) BuildRequest(id int, r *http.Request) (*UpdateUser
 	}
 	if age < 16 {
 		return nil, errors.New("слишком молодой")
+	}
+	if avatarurl != "" {
+		uur.HaveAvater = true
 	}
 	return &UpdateUserRequest{
 		ID:          id,

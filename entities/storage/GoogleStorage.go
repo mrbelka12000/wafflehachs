@@ -60,3 +60,33 @@ func UploadFile(file multipart.File, object string) error {
 
 	return nil
 }
+
+func DeleteFile(object string) error {
+	// bucket := "bucket-name"
+	// object := "object-name"
+	ctx := context.Background()
+	c := getClient()
+	if c == nil {
+		return errors.New("Клиента нет")
+	}
+	defer c.cl.Close()
+
+	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
+	defer cancel()
+
+	o := c.cl.Bucket(c.bucketName).Object(object)
+
+	// Optional: set a generation-match precondition to avoid potential race
+	// conditions and data corruptions. The request to upload is aborted if the
+	// object's generation number does not match your precondition.
+	attrs, err := o.Attrs(ctx)
+	if err != nil {
+		return fmt.Errorf("object.Attrs: %v", err)
+	}
+	o = o.If(storage.Conditions{GenerationMatch: attrs.Generation})
+
+	if err := o.Delete(ctx); err != nil {
+		return fmt.Errorf("Object(%q).Delete: %v", object, err)
+	}
+	return nil
+}
