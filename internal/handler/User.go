@@ -55,6 +55,7 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 		file.Seek(0, 0)
 
+		h.log.Info(origUser.AvatarUrl)
 		if uu.HaveAvater {
 			if err = storage.DeleteFile(tools.GetFileNameFromUrl(origUser.AvatarUrl)); err != nil {
 				SendErrorResponse(w, "Не удалось обновить фотографию", 200)
