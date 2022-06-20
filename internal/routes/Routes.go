@@ -18,5 +18,6 @@ func SetUpMux(h *handler.Handler) *mux.Router {
 
 	r.HandleFunc("/api/user", h.UpdateUser).Methods(http.MethodPut)
 	r.HandleFunc("/api/psychologist/{username}", h.GetPsycho).Methods(http.MethodGet)
+	r.HandleFunc("/api/psychologist/change/{busymode}", h.UpdateBusyMode).Methods(http.MethodPost)
 	return r
 }

@@ -11,7 +11,7 @@ import (
 
 func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	id, err := h.getUserId(r)
+	origUser, err := h.getUserId(r)
 	if err != nil {
 		SendErrorResponse(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
@@ -20,7 +20,7 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	uu := &request.UpdateUserRequest{}
 
-	uu, err = uu.BuildRequest(id, r)
+	uu, err = uu.BuildRequest(origUser.ID, r)
 	if err != nil {
 		SendErrorResponse(w, err.Error(), 400)
 		h.log.Debug(err.Error())
@@ -28,7 +28,6 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userUpd := uu.Build()
-	origUser, _ := h.srv.GetUserByCookie(r.Header.Get("session"))
 	resp := h.srv.UpdateProfile(origUser, userUpd)
 	if resp != nil {
 		SendErrorResponse(w, resp.ErrorMessage, resp.ErrorCode)

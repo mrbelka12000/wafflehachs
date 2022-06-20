@@ -11,6 +11,7 @@ type Psychologist interface {
 	SignUp(psychoId int) *m.ErrorResponse
 	GetAll() ([]m.Psychologist, *m.ErrorResponse)
 	GetByUsername(username string) (*m.Psychologist, *m.ErrorResponse)
+	UpdateBusyMode(mode string, psychoId int) *m.ErrorResponse
 }
 
 type Client interface {

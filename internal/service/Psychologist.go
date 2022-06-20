@@ -25,3 +25,7 @@ func (ps *PsychoService) GetAll() ([]models.Psychologist, *models.ErrorResponse)
 func (ps *PsychoService) GetByUsername(username string) (*models.Psychologist, *models.ErrorResponse) {
 	return ps.repo.GetByUsername(username)
 }
+
+func (ps *PsychoService) UpdateBusyMode(mode string, psychoId int) *models.ErrorResponse {
+	return ps.repo.UpdateBusyMode(mode, psychoId)
+}

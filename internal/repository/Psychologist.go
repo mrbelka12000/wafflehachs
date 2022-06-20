@@ -146,3 +146,20 @@ func (pr *PsychologistRepo) GetByUsername(username string) (*models.Psychologist
 	psycho.Reviews = reviews
 	return psycho, nil
 }
+
+func (pr *PsychologistRepo) UpdateBusyMode(mode string, psychoId int) *models.ErrorResponse {
+
+	_, err := pr.db.Exec(`
+	UPDATE Psychologists
+		SET 
+		    busymode=$1
+	WHERE 
+	    id=$2
+`, mode, psychoId)
+
+	if err != nil {
+		pr.log.Debug("Не удалось обновить данные: " + err.Error())
+		return &models.ErrorResponse{ErrorMessage: "Не удалось обновить данные", ErrorCode: 400}
+	}
+	return nil
+}

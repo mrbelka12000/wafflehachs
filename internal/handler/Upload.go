@@ -11,7 +11,7 @@ import (
 const MaxSize = 10 << 20
 
 func (h *Handler) Upload(w http.ResponseWriter, r *http.Request) {
-	id, err := h.getUserId(r)
+	user, err := h.getUserId(r)
 	if err != nil {
 		SendErrorResponse(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
@@ -57,7 +57,7 @@ func (h *Handler) Upload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	confirmSignUp := userConfirm.Build(id)
+	confirmSignUp := userConfirm.Build(user.ID)
 	resp := h.srv.ContinueSignUp(confirmSignUp)
 	if resp != nil {
 		SendErrorResponse(w, resp.ErrorMessage, resp.ErrorCode)
