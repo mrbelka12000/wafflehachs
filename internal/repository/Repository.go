@@ -19,6 +19,7 @@ type Client interface {
 type User interface {
 	CanLogin(user *m.User) (*m.User, *m.ErrorResponse)
 	SignUp(user *m.User) (*m.User, *m.ErrorResponse)
+	ContinueSignUp(csu *m.ContinueSignUp) *m.ErrorResponse
 }
 
 type Repository struct {

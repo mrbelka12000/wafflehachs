@@ -62,3 +62,7 @@ func (us *UserService) SignUp(user *models.User) (*models.User, *models.ErrorRes
 	}
 	return us.repo.User.SignUp(user)
 }
+
+func (us *UserService) ContinueSignUp(csu *models.ContinueSignUp) *models.ErrorResponse {
+	return us.repo.ContinueSignUp(csu)
+}

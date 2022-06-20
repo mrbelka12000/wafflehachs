@@ -6,5 +6,6 @@ UserName text Unique not null,
 Avatarurl text,
 Email text Unique not null,
 Age integer not null,
+Description text,
 Password text not null
 )

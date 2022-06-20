@@ -8,7 +8,7 @@ type User struct {
 	Email     string  `json:"email"`
 	Password  *string `json:"password,omitempty"`
 	Age       int     `json:"age"`
-	AvatarUrl string  `json:"avataruUrl"`
+	AvatarUrl string  `json:"avatarUrl"`
 }
 
 type Client struct {
@@ -37,4 +37,10 @@ type ErrorResponse struct {
 type SessionResponse struct {
 	ID     int    `json:"id"`
 	Cookie string `json:"cookie"`
+}
+
+type ContinueSignUp struct {
+	ID          int
+	Description string
+	Avatar      string
 }

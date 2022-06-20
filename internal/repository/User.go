@@ -75,3 +75,22 @@ func (ur *UserRepo) SignUp(user *models.User) (*models.User, *models.ErrorRespon
 
 	return user, nil
 }
+
+func (ur *UserRepo) ContinueSignUp(csu *models.ContinueSignUp) *models.ErrorResponse {
+
+	_, err := ur.db.Exec(`
+	INSERT INTO Users
+		(avatarurl, description)
+	VALUES
+	    ($1, $2)
+	WHERE
+		id = $3
+`, csu.Avatar, csu.Description, csu.ID)
+
+	if err != nil {
+		ur.log.Debug("Не удалось продолжить регистрацию: " + err.Error())
+		return &models.ErrorResponse{ErrorMessage: "Не удалось продолжить регистрацию", ErrorCode: 500}
+	}
+
+	return nil
+}
