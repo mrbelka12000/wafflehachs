@@ -43,14 +43,14 @@ func (r *SessionRepo) GetUserByCookie(cookie string) (*models.User, *models.Erro
 	desc := sql.NullString{}
 	err := r.db.QueryRow(`
 	SELECT 
-	    users.id, users.firstname, users.lastname, users.username, users.avatarurl, users.age, users.description
+	    users.id, users.firstname, users.lastname, users.username, users.email,users.avatarurl, users.age, users.description
 	FROM
 	    session
 	JOIN 
 	    users on users.id = session.userid
 	WHERE 
 	    uuid=$1
-`, cookie).Scan(&user.ID, &user.Firstname, &user.Lastname, &user.Username, &avatar, &user.Age, &desc)
+`, cookie).Scan(&user.ID, &user.Firstname, &user.Lastname, &user.Username, &user.Email, &avatar, &user.Age, &desc)
 	if err != nil {
 		r.log.Debug("Не удалось найти пользователя: " + err.Error())
 		return nil, &models.ErrorResponse{ErrorMessage: "Пользователь не найден", ErrorCode: 400}

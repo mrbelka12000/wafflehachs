@@ -10,6 +10,7 @@ import (
 )
 
 func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	id, err := h.getUserId(r)
 	if err != nil {
 		SendErrorResponse(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
@@ -83,7 +84,9 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 			h.log.Debug(resp.ErrorMessage)
 			return
 		}
+		userUpd.AvatarUrl = tools.GetStorageUrl(filename)
 	}
 
+	userUpd.Email = origUser.Email
 	w.Write([]byte(tools.MakeJsonString(userUpd)))
 }
