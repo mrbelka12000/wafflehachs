@@ -23,7 +23,7 @@ type Psychologist struct {
 }
 
 type Review struct {
-	User
+	User    `json:"user"`
 	Anonym  bool   `json:"anonym"`
 	Rating  int    `json:"Rating"`
 	Comment string `json:"comment"`
