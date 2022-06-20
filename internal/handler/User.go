@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 	request "wafflehacks/entities/requests"
-	"wafflehacks/entities/storage"
 	"wafflehacks/models"
 	"wafflehacks/tools"
+	"wafflehacks/tools/storage"
 )
 
 func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {

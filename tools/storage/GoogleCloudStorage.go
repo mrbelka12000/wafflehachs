@@ -12,7 +12,7 @@ import (
 	"cloud.google.com/go/storage"
 )
 
-const GoogleConfigFileName = "entities/storage/gcp-storage.json"
+const GoogleConfigFileName = "tools/storage/gcp-storage.json"
 
 type ClientUploader struct {
 	cl         *storage.Client

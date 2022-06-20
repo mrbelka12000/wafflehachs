@@ -6,12 +6,12 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"wafflehacks/entities/storage"
 	"wafflehacks/internal/handler"
 	"wafflehacks/internal/repository"
 	"wafflehacks/internal/server"
 	"wafflehacks/internal/service"
 	"wafflehacks/tools"
+	"wafflehacks/tools/storage"
 
 	"go.uber.org/zap"
 )

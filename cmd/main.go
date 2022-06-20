@@ -9,8 +9,8 @@ import (
 	"syscall"
 	"time"
 	"wafflehacks/database"
-	"wafflehacks/entities/storage"
 	"wafflehacks/internal/app"
+	"wafflehacks/tools/storage"
 )
 
 func main() {

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	request "wafflehacks/entities/requests"
-	"wafflehacks/entities/storage"
 	"wafflehacks/tools"
+	"wafflehacks/tools/storage"
 )
 
 const MaxSize = 10 << 20

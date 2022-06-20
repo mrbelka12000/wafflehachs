@@ -1,5 +1,5 @@
 .env
 gcp-storage-353811-065f9a465bfd.json
 main.html
-entities/storage/gcp-storage.json
+tools/storage/gcp-storage.json
 .idea
