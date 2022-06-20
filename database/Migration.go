@@ -9,7 +9,14 @@ import (
 	"go.uber.org/zap"
 )
 
-func UpTables(db *sql.DB, log *zap.SugaredLogger) {
+func Listener(db *sql.DB, log *zap.SugaredLogger, ch chan bool) {
+	for {
+		<-ch
+		upTables(db, log)
+	}
+}
+
+func upTables(db *sql.DB, log *zap.SugaredLogger) {
 	schemaUpDir := os.Getenv("Schema_UP")
 	dir, err := ioutil.ReadDir(schemaUpDir)
 	if err != nil {

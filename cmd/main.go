@@ -25,7 +25,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	database.UpTables(db, log)
+	ch := make(chan bool)
+	go database.Listener(db, log, ch)
+	go database.DeleteExpiredCookie(db, log, ch)
+
 	srv := app.Initialize(db, log)
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
@@ -48,6 +51,7 @@ func main() {
 		if err = os.Remove(storage.GoogleConfigFileName); err != nil {
 			log.Debug(err.Error())
 		}
+		close(ch)
 		cancel()
 	}()
 
