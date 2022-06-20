@@ -1,14 +1,15 @@
 package models
 
 type User struct {
-	ID        int     `json:"id"`
-	Firstname string  `json:"firstname"`
-	Lastname  string  `json:"lastname"`
-	Username  string  `json:"username"`
-	Email     string  `json:"email"`
-	Password  *string `json:"password,omitempty"`
-	Age       int     `json:"age"`
-	AvatarUrl string  `json:"avatarUrl"`
+	ID          int     `json:"id"`
+	Firstname   string  `json:"firstname"`
+	Lastname    string  `json:"lastname"`
+	Username    string  `json:"username"`
+	Email       string  `json:"email"`
+	Password    *string `json:"password,omitempty"`
+	Description string  `json:"description"`
+	Age         int     `json:"age"`
+	AvatarUrl   string  `json:"avatarUrl"`
 }
 
 type Client struct {

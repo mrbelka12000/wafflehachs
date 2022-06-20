@@ -37,7 +37,7 @@ func (pr *PsychologistRepo) GetAll() ([]models.Psychologist, *models.ErrorRespon
 	psychos := []models.Psychologist{}
 	rows, err := pr.db.Query(`
 	SELECT 
-		users.id, users.firstname, users.lastname, users.username, users.avatarurl, users.age
+		users.id, users.firstname, users.lastname, users.username, users.avatarurl, users.age, users.description
 	FROM 
 		Psychologists 
 	JOIN
@@ -52,7 +52,7 @@ func (pr *PsychologistRepo) GetAll() ([]models.Psychologist, *models.ErrorRespon
 		avatarUrl := sql.NullString{}
 
 		psycho := models.Psychologist{}
-		if err := rows.Scan(&psycho.ID, &psycho.Firstname, &psycho.Lastname, &psycho.Username, &avatarUrl, &psycho.Age); err != nil {
+		if err := rows.Scan(&psycho.ID, &psycho.Firstname, &psycho.Lastname, &psycho.Username, &avatarUrl, &psycho.Age, &psycho.Description); err != nil {
 			pr.log.Debug("Ошибка при получении данных психолога: " + err.Error())
 			continue
 		}
