@@ -48,7 +48,7 @@ func (h *Handler) Upload(w http.ResponseWriter, r *http.Request) {
 	desc := r.FormValue("description")
 	userConfirm.Description = desc
 
-	if !userConfirm.Handle() {
+	if userConfirm.Handle() {
 		SendErrorResponse(w, "Пустые данные, добавлять ничего не будет", http.StatusOK)
 		return
 	}
