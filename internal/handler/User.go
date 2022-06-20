@@ -26,9 +26,9 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := uu.Build()
-
-	resp := h.srv.UpdateProfile(user, r.Header.Get("session"))
+	userUpd := uu.Build()
+	origUser, _ := h.srv.GetUserByCookie(r.Header.Get("session"))
+	resp := h.srv.UpdateProfile(origUser, userUpd)
 	if resp != nil {
 		SendErrorResponse(w, resp.ErrorMessage, resp.ErrorCode)
 		h.log.Debug(resp.ErrorMessage)
@@ -56,7 +56,7 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		file.Seek(0, 0)
 
 		if uu.HaveAvater {
-			if err = storage.DeleteFile(tools.GetFileNameFromUrl(uu.AvatarUrl)); err != nil {
+			if err = storage.DeleteFile(tools.GetFileNameFromUrl(origUser.AvatarUrl)); err != nil {
 				SendErrorResponse(w, "Не удалось обновить фотографию", 200)
 				h.log.Debug("Не удалось обновить фотографию: " + err.Error())
 				return
@@ -72,8 +72,8 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		}
 
 		csu := &models.ContinueSignUp{
-			UserID:      user.ID,
-			Description: user.Description,
+			UserID:      userUpd.ID,
+			Description: userUpd.Description,
 			Avatar:      filename,
 		}
 

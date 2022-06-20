@@ -21,7 +21,7 @@ type User interface {
 	CanLogin(email *m.User) (*m.User, *m.ErrorResponse)
 	SignUp(user *m.User) (*m.User, *m.ErrorResponse)
 	ContinueSignUp(csu *m.ContinueSignUp) *m.ErrorResponse
-	UpdateProfile(user *m.User, cookie string) *m.ErrorResponse
+	UpdateProfile(userOrig, userUpd *m.User) *m.ErrorResponse
 }
 
 type Session interface {
