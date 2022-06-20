@@ -28,7 +28,7 @@ func (r *SessionRepo) CreateSession(session *models.SessionResponse) *models.Err
 			(userid, uuid, expires_at)
 		VALUES
 			($1, $2, $3)
-	`, session.ID, session.Cookie, time.Now().Add(10*time.Minute))
+	`, session.ID, session.Cookie, time.Now().Add(60*time.Minute))
 	if err != nil {
 		r.log.Debug("inserting cookie: " + err.Error())
 		return &models.ErrorResponse{ErrorMessage: "insert cookie", ErrorCode: 500}
