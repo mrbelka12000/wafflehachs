@@ -24,7 +24,7 @@ func newSession(db *sql.DB, log *zap.SugaredLogger) *SessionRepo {
 func (r *SessionRepo) CreateSession(session *models.SessionResponse) *models.ErrorResponse {
 	_, err := r.db.Exec(`
 		INSERT INTO session
-			(id, uuid, expires_at)
+			(userid, uuid, expires_at)
 		VALUES
 			($1, $2, $3)
 	`, session.ID, session.Cookie, time.Now().Add(10*time.Minute))

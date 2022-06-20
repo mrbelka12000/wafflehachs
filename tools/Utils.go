@@ -3,8 +3,11 @@ package tools
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
+	"mime/multipart"
+	"net/http"
 	"os"
 	"strings"
 
@@ -58,4 +61,20 @@ func GetPointerString(value string) *string {
 
 func GetRandomString() string {
 	return uuid.NewV4().String()
+}
+
+func IsValidType(file multipart.File) (string, bool) {
+	buff := make([]byte, 512)
+	if _, err := file.Read(buff); err != nil {
+		return "", false
+	}
+	filetype := http.DetectContentType(buff)
+	if filetype != "image/jpeg" && filetype != "image/gif" && filetype != "image/png" {
+		return "", false
+	}
+	return filetype, true
+}
+
+func GetStorageUrl(filename string) string {
+	return fmt.Sprintf("%v/%v/%v/%v", os.Getenv("googlestorage"), os.Getenv("bucket"), os.Getenv("uploadPath"), filename)
 }

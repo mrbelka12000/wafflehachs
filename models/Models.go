@@ -8,7 +8,7 @@ type User struct {
 	Email     string  `json:"email"`
 	Password  *string `json:"password,omitempty"`
 	Age       int     `json:"age"`
-	AvatarUrl string  `json:"avataruUrl"`
+	AvatarUrl string  `json:"avatarUrl"`
 }
 
 type Client struct {
@@ -23,10 +23,10 @@ type Psychologist struct {
 }
 
 type Review struct {
-	ClientId       int    `json:"clientID"`
-	ClientUsername string `json:"clientUserName"`
-	Rating         int    `json:"Rating"`
-	Comment        string `json:"comment"`
+	User    `json:"user"`
+	Anonym  bool   `json:"anonym"`
+	Rating  int    `json:"Rating"`
+	Comment string `json:"comment"`
 }
 
 type ErrorResponse struct {
@@ -37,4 +37,10 @@ type ErrorResponse struct {
 type SessionResponse struct {
 	ID     int    `json:"id"`
 	Cookie string `json:"cookie"`
+}
+
+type ContinueSignUp struct {
+	ID          int
+	Description string
+	Avatar      string
 }

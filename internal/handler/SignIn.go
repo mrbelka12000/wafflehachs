@@ -10,19 +10,19 @@ import (
 )
 
 func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	req := request.ClientSignInRequest{}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		SendErrorResponse(w, "serailization failed: "+err.Error(), 400)
-		h.log.Debug("serailization failed: "+err.Error(), 400)
 		return
 	}
 
 	u := req.Build()
 
-	user, resp := h.srv.User.GetUser(u)
+	user, resp := h.srv.User.CanLogin(u)
 	if resp != nil {
-		h.log.Debug(resp)
 		SendErrorResponse(w, "not found", 400)
 		return
 	}
@@ -37,4 +37,5 @@ func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 		SendErrorResponse(w, err.ErrorMessage, err.ErrorCode)
 		return
 	}
+	w.Write([]byte(tools.MakeJsonString(s)))
 }
