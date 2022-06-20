@@ -44,7 +44,7 @@ func (r *SessionRepo) GetUserIdByCookie(cookie string) (int, *models.ErrorRespon
 	FROM
 	    session
 	WHERE 
-	    cookie=$1
+	    uuid=$1
 `, cookie).Scan(&id)
 	if err != nil {
 		r.log.Debug("Не удалось найти пользователя: " + err.Error())
