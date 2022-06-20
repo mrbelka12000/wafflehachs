@@ -39,7 +39,7 @@ func (us *UserService) CanLogin(user *models.User) (*models.User, *models.ErrorR
 	return nil, &models.ErrorResponse{ErrorMessage: "wrong password", ErrorCode: 400}
 }
 
-func (us *UserService) SignUp(user *models.User) (*models.User, *models.ErrorResponse) {
+func (us *UserService) SignUp(user *models.User, usertype string) (*models.User, *models.ErrorResponse) {
 	if err := validate.ValidatingPassword(*user.Password); err != nil {
 		us.log.Debug(err.Error())
 		return nil, &models.ErrorResponse{ErrorMessage: err.Error(), ErrorCode: 400}
@@ -60,7 +60,7 @@ func (us *UserService) SignUp(user *models.User) (*models.User, *models.ErrorRes
 		us.log.Debug(fmt.Sprintf("Адрес %v не подходит по требованиям ", user.Email))
 		return nil, &models.ErrorResponse{ErrorMessage: err.Error(), ErrorCode: 400}
 	}
-	return us.repo.User.SignUp(user)
+	return us.repo.User.SignUp(user, usertype)
 }
 
 func (us *UserService) ContinueSignUp(csu *models.ContinueSignUp) *models.ErrorResponse {

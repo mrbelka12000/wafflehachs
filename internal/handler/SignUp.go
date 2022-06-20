@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	request "wafflehacks/entities/requests"
+	"wafflehacks/entities/usertypes"
 	"wafflehacks/models"
 	"wafflehacks/tools"
 )
@@ -19,12 +20,12 @@ func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
 	user := userSignUpReq.Build()
 
 	subject := r.FormValue("subject")
-	if subject != "client" && subject != "psychologist" {
+	if subject != usertypes.Client && subject != usertypes.Psycho {
 		SendErrorResponse(w, "Неизвестный тип регистрации", 400)
 		return
 	}
 
-	user, resp := h.srv.User.SignUp(user)
+	user, resp := h.srv.User.SignUp(user, subject)
 	if resp != nil {
 		SendErrorResponse(w, resp.ErrorMessage, resp.ErrorCode)
 		return

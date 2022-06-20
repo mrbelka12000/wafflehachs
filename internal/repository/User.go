@@ -2,7 +2,6 @@ package repository
 
 import (
 	"database/sql"
-	"wafflehacks/entities/usertypes"
 	"wafflehacks/models"
 
 	"go.uber.org/zap"
@@ -40,7 +39,7 @@ func (ur *UserRepo) CanLogin(user *models.User) (*models.User, *models.ErrorResp
 	return User, nil
 }
 
-func (ur *UserRepo) SignUp(user *models.User) (*models.User, *models.ErrorResponse) {
+func (ur *UserRepo) SignUp(user *models.User, usertype string) (*models.User, *models.ErrorResponse) {
 	tx, err := ur.db.Begin()
 	if err != nil {
 		return nil, &models.ErrorResponse{ErrorMessage: "Не удалось подготовить транзакцию", ErrorCode: 500}
@@ -66,7 +65,7 @@ func (ur *UserRepo) SignUp(user *models.User) (*models.User, *models.ErrorRespon
 		(email, role)
 	VALUES
 		($1,$2)
-	`, user.Email, usertypes.Client)
+	`, user.Email, usertype)
 	if err != nil {
 		tx.Rollback()
 		ur.log.Debug("Не удалось создать психолога по причине: " + err.Error())

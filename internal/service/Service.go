@@ -20,7 +20,7 @@ type Client interface {
 
 type User interface {
 	CanLogin(email *m.User) (*m.User, *m.ErrorResponse)
-	SignUp(user *m.User) (*m.User, *m.ErrorResponse)
+	SignUp(user *m.User, usertype string) (*m.User, *m.ErrorResponse)
 	ContinueSignUp(csu *m.ContinueSignUp) *m.ErrorResponse
 	UpdateProfile(userOrig, userUpd *m.User) *m.ErrorResponse
 }

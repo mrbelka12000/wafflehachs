@@ -1,6 +1,6 @@
 package usertypes
 
 const (
-	Client = "ClientRole"
-	Psycho = "Psychologist"
+	Client = "client"
+	Psycho = "psychologist"
 )
