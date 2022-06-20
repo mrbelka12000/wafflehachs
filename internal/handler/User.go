@@ -85,5 +85,5 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	SendErrorResponse(w, "", 200)
+	w.Write([]byte(tools.MakeJsonString(userUpd)))
 }

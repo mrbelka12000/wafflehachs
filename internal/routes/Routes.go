@@ -13,7 +13,7 @@ func SetUpMux(h *handler.Handler) *mux.Router {
 	r.HandleFunc("/api/signup", h.SignUp).Methods(http.MethodPost)
 	r.HandleFunc("/api/signin", h.SignIn).Methods(http.MethodPost)
 
-	r.HandleFunc("/api/main", h.MainPage).Methods(http.MethodPost)
+	r.HandleFunc("/api/main", h.MainPage).Methods(http.MethodGet)
 	r.HandleFunc("/api/upload", h.Upload).Methods(http.MethodPost)
 
 	r.HandleFunc("/api/user", h.UpdateUser).Methods(http.MethodPut)
