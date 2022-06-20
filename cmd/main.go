@@ -16,6 +16,7 @@ import (
 func main() {
 	logger, err := zap.NewDevelopment()
 	if err != nil {
+		println(err.Error())
 		return
 	}
 	log := logger.Sugar()
@@ -23,8 +24,10 @@ func main() {
 
 	db, err := database.GetConnection()
 	if err != nil {
-		log.Fatal(err)
+		log.Debug(err.Error())
+		return
 	}
+
 	ch := make(chan bool)
 	go database.Listener(db, log, ch)
 	go database.DeleteExpiredCookie(db, log, ch)
@@ -35,9 +38,12 @@ func main() {
 
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("listen: %s\n", err)
+			done <- os.Interrupt
+			log.Info(err.Error())
+			return
 		}
 	}()
+
 	log.Info("Server started on port: " + os.Getenv("PORT"))
 
 	<-done
@@ -47,16 +53,25 @@ func main() {
 		// extra handling
 		if err = db.Close(); err != nil {
 			log.Debug(err.Error())
+		} else {
+			log.Info("Connection to database successfully closed")
 		}
+
 		if err = os.Remove(storage.GoogleConfigFileName); err != nil {
 			log.Debug(err.Error())
+		} else {
+			log.Info("Temp files removed")
 		}
+
 		close(ch)
+		log.Info("Channels closed")
 		cancel()
 	}()
 
 	if err := srv.Shutdown(ctx); err != nil {
-		log.Fatalf("Server Shutdown Failed:%+v", err)
+		log.Debugf("Server Shutdown Failed:%+v", err)
+		return
 	}
+
 	log.Info("Server Exited Properly")
 }
