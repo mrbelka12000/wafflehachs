@@ -14,8 +14,9 @@ func NewServer(h *handler.Handler) *http.Server {
 		port = "8080"
 	}
 	return &http.Server{
-		WriteTimeout: time.Duration(25 * time.Second),
-		ReadTimeout:  time.Duration(25 * time.Second),
+		WriteTimeout: 25 * time.Second,
+		ReadTimeout:  25 * time.Second,
+		IdleTimeout:  25 * time.Second,
 		Handler:      routes.SetUpMux(h),
 		Addr:         ":" + port,
 	}
