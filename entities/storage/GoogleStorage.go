@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"mime/multipart"
 	"os"
 	"time"
@@ -49,9 +50,15 @@ func UploadFile(file multipart.File, object string) error {
 
 	// Upload an object with storage.Writer.
 
-	err := c.cl.Bucket(c.bucketName).Object(c.uploadPath + object).Delete(context.Background())
+	wc := c.cl.Bucket(c.bucketName).Object(c.uploadPath + object).NewWriter(ctx)
+	if _, err := io.Copy(wc, file); err != nil {
+		return fmt.Errorf("io.Copy: %v", err)
+	}
+	if err := wc.Close(); err != nil {
+		return fmt.Errorf("Writer.Close: %v", err)
+	}
 
-	return err
+	return nil
 }
 
 func DeleteFile(object string) error {
@@ -67,19 +74,10 @@ func DeleteFile(object string) error {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
 	defer cancel()
 
-	o := c.cl.Bucket(c.bucketName).Object(object)
+	err := c.cl.Bucket(c.bucketName).Object(object).Delete(ctx)
 
 	// Optional: set a generation-match precondition to avoid potential race
 	// conditions and data corruptions. The request to upload is aborted if the
 	// object's generation number does not match your precondition.
-	attrs, err := o.Attrs(ctx)
-	if err != nil {
-		return fmt.Errorf("object.Attrs: %v", err)
-	}
-	o = o.If(storage.Conditions{GenerationMatch: attrs.Generation})
-
-	if err := o.Delete(ctx); err != nil {
-		return fmt.Errorf("Object(%q).Delete: %v", object, err)
-	}
-	return nil
+	return err
 }
