@@ -79,10 +79,9 @@ func (ur *UserRepo) SignUp(user *models.User) (*models.User, *models.ErrorRespon
 func (ur *UserRepo) ContinueSignUp(csu *models.ContinueSignUp) *models.ErrorResponse {
 
 	_, err := ur.db.Exec(`
-	INSERT INTO Users
-		(avatarurl, description)
-	VALUES
-	    ($1, $2)
+	UPDATE Users
+		SET 
+		    avatarurl=$1, description=$2
 	WHERE
 		id = $3
 `, csu.Avatar, csu.Description, csu.ID)
