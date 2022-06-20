@@ -3,6 +3,7 @@ package repository
 import (
 	"database/sql"
 	"time"
+	"wafflehacks/tools"
 
 	"wafflehacks/models"
 
@@ -36,23 +37,31 @@ func (r *SessionRepo) CreateSession(session *models.SessionResponse) *models.Err
 	return nil
 }
 
-func (r *SessionRepo) GetUserIdByCookie(cookie string) (int, *models.ErrorResponse) {
-	id := 0
+func (r *SessionRepo) GetUserByCookie(cookie string) (*models.User, *models.ErrorResponse) {
+	user := &models.User{}
+	avatar := sql.NullString{}
+	desc := sql.NullString{}
 	err := r.db.QueryRow(`
 	SELECT 
-	    userid
+	    users.id, users.firstname, users.lastname, users.username, users.avatarurl, users.age, users.description
 	FROM
 	    session
+	JOIN 
+	    users on users.id = session.userid
 	WHERE 
 	    uuid=$1
-`, cookie).Scan(&id)
+`, cookie).Scan(&user.ID, &user.Firstname, &user.Lastname, &user.Username, &avatar, &user.Age, &desc)
 	if err != nil {
 		r.log.Debug("Не удалось найти пользователя: " + err.Error())
-		return 0, &models.ErrorResponse{ErrorMessage: "Пользователь не найден", ErrorCode: 400}
+		return nil, &models.ErrorResponse{ErrorMessage: "Пользователь не найден", ErrorCode: 400}
 	}
-	if id == 0 {
+
+	if user.ID == 0 {
 		r.log.Debug("Не удалось найти пользователя: " + err.Error())
-		return 0, &models.ErrorResponse{ErrorMessage: "Пользователь не найден", ErrorCode: 400}
+		return nil, &models.ErrorResponse{ErrorMessage: "Пользователь не найден", ErrorCode: 400}
 	}
-	return id, nil
+
+	user.AvatarUrl = tools.GetStorageUrl(avatar.String)
+	user.Description = desc.String
+	return user, nil
 }

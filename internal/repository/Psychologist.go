@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"wafflehacks/entities/busymode"
 	"wafflehacks/models"
+	"wafflehacks/tools"
 
 	"go.uber.org/zap"
 )
@@ -71,7 +72,7 @@ func (pr *PsychologistRepo) GetAll() ([]models.Psychologist, *models.ErrorRespon
 		}
 
 		psycho.Rate = avgRate
-		psycho.AvatarUrl = avatarUrl.String
+		psycho.AvatarUrl = tools.GetStorageUrl(avatarUrl.String)
 		psychos = append(psychos, psycho)
 	}
 	return psychos, nil
@@ -141,7 +142,7 @@ func (pr *PsychologistRepo) GetByUsername(username string) (*models.Psychologist
 	}
 
 	psycho.Rate = avgRate
-	psycho.AvatarUrl = avatar.String
+	psycho.AvatarUrl = tools.GetStorageUrl(avatar.String)
 	psycho.Reviews = reviews
 	return psycho, nil
 }

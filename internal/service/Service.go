@@ -21,11 +21,12 @@ type User interface {
 	CanLogin(email *m.User) (*m.User, *m.ErrorResponse)
 	SignUp(user *m.User) (*m.User, *m.ErrorResponse)
 	ContinueSignUp(csu *m.ContinueSignUp) *m.ErrorResponse
+	UpdateProfile(user *m.User, cookie string) *m.ErrorResponse
 }
 
 type Session interface {
 	CreateSession(session *m.SessionResponse) *m.ErrorResponse
-	GetUserIdByCookie(cookie string) (int, *m.ErrorResponse)
+	GetUserByCookie(cookie string) (*m.User, *m.ErrorResponse)
 }
 
 type Service struct {

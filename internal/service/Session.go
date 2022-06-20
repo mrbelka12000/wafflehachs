@@ -23,6 +23,6 @@ func (s *SessionService) CreateSession(session *models.SessionResponse) *models.
 	return s.repo.CreateSession(session)
 }
 
-func (s *SessionService) GetUserIdByCookie(cookie string) (int, *models.ErrorResponse) {
-	return s.repo.GetUserIdByCookie(cookie)
+func (s *SessionService) GetUserByCookie(cookie string) (*models.User, *models.ErrorResponse) {
+	return s.repo.GetUserByCookie(cookie)
 }

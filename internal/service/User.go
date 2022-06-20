@@ -66,3 +66,9 @@ func (us *UserService) SignUp(user *models.User) (*models.User, *models.ErrorRes
 func (us *UserService) ContinueSignUp(csu *models.ContinueSignUp) *models.ErrorResponse {
 	return us.repo.ContinueSignUp(csu)
 }
+
+func (us *UserService) UpdateProfile(user *models.User, cookie string) *models.ErrorResponse {
+	userOrig, _ := us.repo.GetUserByCookie(cookie)
+
+	return us.repo.UpdateProfile(userOrig, user)
+}

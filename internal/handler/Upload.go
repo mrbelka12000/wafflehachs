@@ -11,19 +11,12 @@ import (
 const MaxSize = 10 << 20
 
 func (h *Handler) Upload(w http.ResponseWriter, r *http.Request) {
-	cookie := r.Header.Get("session")
-	if cookie == "" {
+	id, err := h.getUserId(r)
+	if err != nil {
 		SendErrorResponse(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-		h.log.Debug("Не известный пользователь: ", r.RemoteAddr)
 		return
 	}
-	id, resp := h.srv.GetUserIdByCookie(cookie)
-	if resp != nil {
-		SendErrorResponse(w, resp.ErrorMessage, resp.ErrorCode)
-		h.log.Debug(resp.ErrorMessage)
-		return
-	}
-	//cookie := r.Header.Get("sessionCookie")
+
 	r.ParseMultipartForm(10 << 20)
 	userConfirm := &request.UserSignUpContinueRequest{}
 	var haveError bool
@@ -54,7 +47,7 @@ func (h *Handler) Upload(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		userConfirm.Avatar = tools.GetStorageUrl(filename)
+		userConfirm.Avatar = filename
 	}
 	desc := r.FormValue("description")
 	userConfirm.Description = desc
@@ -65,7 +58,7 @@ func (h *Handler) Upload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	confirmSignUp := userConfirm.Build(id)
-	resp = h.srv.ContinueSignUp(confirmSignUp)
+	resp := h.srv.ContinueSignUp(confirmSignUp)
 	if resp != nil {
 		SendErrorResponse(w, resp.ErrorMessage, resp.ErrorCode)
 		return

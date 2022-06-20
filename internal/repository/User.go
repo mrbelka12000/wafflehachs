@@ -92,3 +92,83 @@ func (ur *UserRepo) ContinueSignUp(csu *models.ContinueSignUp) *models.ErrorResp
 
 	return nil
 }
+
+func (ur *UserRepo) UpdateProfile(userOrig, userUpd *models.User) *models.ErrorResponse {
+	tx, err := ur.db.Begin()
+	if err != nil {
+		ur.log.Error(err.Error())
+		return &models.ErrorResponse{ErrorMessage: "Не удалось подготовить базу", ErrorCode: 500}
+	}
+	defer tx.Commit()
+
+	if userOrig.Firstname != userUpd.Firstname {
+		_, err = tx.Exec(`
+
+		UPDATE Users
+		    SET firstname=$1
+		Where 
+		    id =$2
+`, userUpd.Firstname, userUpd.ID)
+		if err != nil {
+			tx.Rollback()
+			ur.log.Debug("не удалось обновить имя: " + err.Error())
+			return &models.ErrorResponse{ErrorMessage: "не удалось обновить имя", ErrorCode: 400}
+		}
+	}
+
+	if userOrig.Lastname != userUpd.Lastname {
+		_, err = tx.Exec(`
+		UPDATE Users
+		    SET lastname=$1
+		Where 
+		    id =$2
+`, userUpd.Lastname, userUpd.ID)
+		if err != nil {
+			tx.Rollback()
+			ur.log.Debug("не удалось обновить фамилию: " + err.Error())
+			return &models.ErrorResponse{ErrorMessage: "не удалось обновить фамилию", ErrorCode: 400}
+		}
+	}
+
+	if userOrig.Username != userUpd.Username {
+		_, err = tx.Exec(`
+		UPDATE Users
+		    SET username=$1
+		Where 
+		    id =$2
+`, userUpd.Username, userUpd.ID)
+		if err != nil {
+			tx.Rollback()
+			ur.log.Debug("не удалось обновить ник: " + err.Error())
+			return &models.ErrorResponse{ErrorMessage: "ник уже занят, пожалуйста используйте другой", ErrorCode: 400}
+		}
+	}
+	if userOrig.Description != userUpd.Description {
+		_, err = tx.Exec(`
+		UPDATE Users
+		    SET description=$1
+		Where 
+		    id =$2
+`, userUpd.Description, userUpd.ID)
+		if err != nil {
+			tx.Rollback()
+			ur.log.Debug("не удалось обновить описание профиля: " + err.Error())
+			return &models.ErrorResponse{ErrorMessage: "не удалось обновить описание профиля", ErrorCode: 400}
+		}
+	}
+
+	if userOrig.Age != userUpd.Age {
+		_, err = tx.Exec(`
+		UPDATE Users
+		    SET age=$1
+		Where 
+		    id =$2
+`, userUpd.Age, userUpd.ID)
+		if err != nil {
+			tx.Rollback()
+			ur.log.Debug("не удалось обновить возраст: " + err.Error())
+			return &models.ErrorResponse{ErrorMessage: "не удалось обновить возраст", ErrorCode: 400}
+		}
+	}
+	return nil
+}
