@@ -11,7 +11,18 @@ import (
 const MaxSize = 10 << 20
 
 func (h *Handler) Upload(w http.ResponseWriter, r *http.Request) {
-
+	cookie := r.Header.Get("session")
+	if cookie == "" {
+		SendErrorResponse(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		h.log.Debug("Не известный пользователь: ", r.RemoteAddr)
+		return
+	}
+	id, resp := h.srv.GetUserIdByCookie(cookie)
+	if resp != nil {
+		SendErrorResponse(w, resp.ErrorMessage, resp.ErrorCode)
+		h.log.Debug(resp.ErrorMessage)
+		return
+	}
 	//cookie := r.Header.Get("sessionCookie")
 	r.ParseMultipartForm(10 << 20)
 	userConfirm := &request.UserSignUpContinueRequest{}
@@ -53,8 +64,8 @@ func (h *Handler) Upload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	confirmSignUp := userConfirm.Build()
-	resp := h.srv.ContinueSignUp(confirmSignUp)
+	confirmSignUp := userConfirm.Build(id)
+	resp = h.srv.ContinueSignUp(confirmSignUp)
 	if resp != nil {
 		SendErrorResponse(w, resp.ErrorMessage, resp.ErrorCode)
 		return

@@ -7,8 +7,9 @@ type UserSignUpContinueRequest struct {
 	Avatar      string
 }
 
-func (uc *UserSignUpContinueRequest) Build() *models.ContinueSignUp {
+func (uc *UserSignUpContinueRequest) Build(userid int) *models.ContinueSignUp {
 	return &models.ContinueSignUp{
+		UserID:      userid,
 		Description: uc.Description,
 		Avatar:      uc.Avatar,
 	}

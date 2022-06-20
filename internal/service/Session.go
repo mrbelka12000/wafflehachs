@@ -22,3 +22,7 @@ func newSession(repo *repository.Repository, log *zap.SugaredLogger) *SessionSer
 func (s *SessionService) CreateSession(session *models.SessionResponse) *models.ErrorResponse {
 	return s.repo.CreateSession(session)
 }
+
+func (s *SessionService) GetUserIdByCookie(cookie string) (int, *models.ErrorResponse) {
+	return s.repo.GetUserIdByCookie(cookie)
+}

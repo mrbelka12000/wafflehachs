@@ -25,6 +25,7 @@ type User interface {
 
 type Session interface {
 	CreateSession(session *m.SessionResponse) *m.ErrorResponse
+	GetUserIdByCookie(cookie string) (int, *m.ErrorResponse)
 }
 
 type Service struct {

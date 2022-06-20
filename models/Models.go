@@ -40,7 +40,7 @@ type SessionResponse struct {
 }
 
 type ContinueSignUp struct {
-	ID          int
+	UserID      int
 	Description string
 	Avatar      string
 }

@@ -35,3 +35,24 @@ func (r *SessionRepo) CreateSession(session *models.SessionResponse) *models.Err
 
 	return nil
 }
+
+func (r *SessionRepo) GetUserIdByCookie(cookie string) (int, *models.ErrorResponse) {
+	id := 0
+	err := r.db.QueryRow(`
+	SELECT 
+	    userid
+	FROM
+	    session
+	WHERE 
+	    cookie=$1
+`, cookie).Scan(&id)
+	if err != nil {
+		r.log.Debug("Не удалось найти пользователя: " + err.Error())
+		return 0, &models.ErrorResponse{ErrorMessage: "Пользователь не найден", ErrorCode: 400}
+	}
+	if id == 0 {
+		r.log.Debug("Не удалось найти пользователя: " + err.Error())
+		return 0, &models.ErrorResponse{ErrorMessage: "Пользователь не найден", ErrorCode: 400}
+	}
+	return id, nil
+}

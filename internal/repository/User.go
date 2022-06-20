@@ -84,8 +84,7 @@ func (ur *UserRepo) ContinueSignUp(csu *models.ContinueSignUp) *models.ErrorResp
 		    avatarurl=$1, description=$2
 	WHERE
 		id = $3
-`, csu.Avatar, csu.Description, csu.ID)
-
+`, csu.Avatar, csu.Description, csu.UserID)
 	if err != nil {
 		ur.log.Debug("Не удалось продолжить регистрацию: " + err.Error())
 		return &models.ErrorResponse{ErrorMessage: "Не удалось продолжить регистрацию", ErrorCode: 500}
