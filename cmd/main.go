@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"go.uber.org/zap"
 	"net/http"
 	"os"
 	"os/signal"
@@ -11,6 +10,8 @@ import (
 	"wafflehacks/database"
 	"wafflehacks/internal/app"
 	"wafflehacks/tools/storage"
+
+	"go.uber.org/zap"
 )
 
 func main() {
