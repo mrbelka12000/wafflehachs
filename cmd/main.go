@@ -38,7 +38,7 @@ func main() {
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			done <- os.Interrupt
-			log.Info(err.Error())
+			log.Debug(err.Error())
 			return
 		}
 	}()
