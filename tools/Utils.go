@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"syscall"
 
 	uuid "github.com/satori/go.uuid"
 )
@@ -82,4 +83,17 @@ func GetStorageUrl(filename string) string {
 func GetFileNameFromUrl(fileUrl string) string {
 	parsedUrl := strings.Split(fileUrl, "/")
 	return parsedUrl[len(parsedUrl)-1]
+}
+
+func CheckSignal(signal os.Signal) bool {
+	switch signal {
+	case os.Interrupt:
+		return true
+	case syscall.SIGINT:
+		return true
+	case syscall.SIGTERM:
+		return true
+	default:
+		return false
+	}
 }
