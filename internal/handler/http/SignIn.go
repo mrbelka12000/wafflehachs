@@ -1,8 +1,9 @@
-package handler
+package http
 
 import (
 	"encoding/json"
 	"net/http"
+	"wafflehacks/entities/response"
 
 	request "wafflehacks/entities/requests"
 	"wafflehacks/models"
@@ -15,7 +16,7 @@ func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 	req := request.ClientSignInRequest{}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		SendErrorResponse(w, "serailization failed: "+err.Error(), 400)
+		response.SendErrorResponse(w, "serailization failed: "+err.Error(), 400)
 		return
 	}
 
@@ -23,7 +24,7 @@ func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 
 	user, resp := h.srv.User.CanLogin(u)
 	if resp != nil {
-		SendErrorResponse(w, "not found", 400)
+		response.SendErrorResponse(w, "not found", 400)
 		return
 	}
 
@@ -34,7 +35,7 @@ func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 
 	if err := h.srv.CreateSession(s); err != nil {
 		h.log.Debug("create session failed: " + err.ErrorMessage)
-		SendErrorResponse(w, err.ErrorMessage, err.ErrorCode)
+		response.SendErrorResponse(w, err.ErrorMessage, err.ErrorCode)
 		return
 	}
 	w.Write([]byte(tools.MakeJsonString(s)))

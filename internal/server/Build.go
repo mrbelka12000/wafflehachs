@@ -4,11 +4,12 @@ import (
 	"net/http"
 	"os"
 	"time"
-	"wafflehacks/internal/handler"
+	h "wafflehacks/internal/handler/http"
+	ws "wafflehacks/internal/handler/websocket"
 	"wafflehacks/internal/routes"
 )
 
-func NewServer(h *handler.Handler) *http.Server {
+func NewServer(h *h.Handler, ws *ws.Handler) *http.Server {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -17,7 +18,7 @@ func NewServer(h *handler.Handler) *http.Server {
 		WriteTimeout: 25 * time.Second,
 		ReadTimeout:  25 * time.Second,
 		IdleTimeout:  25 * time.Second,
-		Handler:      routes.SetUpMux(h),
+		Handler:      routes.SetUpMux(h, ws),
 		Addr:         ":" + port,
 	}
 }

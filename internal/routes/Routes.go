@@ -2,22 +2,30 @@ package routes
 
 import (
 	"net/http"
-	"wafflehacks/internal/handler"
+	h "wafflehacks/internal/handler/http"
+	ws "wafflehacks/internal/handler/websocket"
 
 	"github.com/gorilla/mux"
 )
 
-func SetUpMux(h *handler.Handler) *mux.Router {
+func SetUpMux(handler *h.Handler, websocket *ws.Handler) *mux.Router {
 	r := mux.NewRouter()
 
-	r.HandleFunc("/api/signup", h.SignUp).Methods(http.MethodPost)
-	r.HandleFunc("/api/signin", h.SignIn).Methods(http.MethodPost)
+	//Http Handlers
+	r.HandleFunc("/api/signup", handler.SignUp).Methods(http.MethodPost)
+	r.HandleFunc("/api/signin", handler.SignIn).Methods(http.MethodPost)
 
-	r.HandleFunc("/api/main", h.MainPage).Methods(http.MethodGet)
-	r.HandleFunc("/api/upload", h.Upload).Methods(http.MethodPost)
+	r.HandleFunc("/api/main", handler.MainPage).Methods(http.MethodGet)
+	r.HandleFunc("/api/upload", handler.Upload).Methods(http.MethodPost)
 
-	r.HandleFunc("/api/user", h.UpdateUser).Methods(http.MethodPut)
-	r.HandleFunc("/api/psychologist/{username}", h.GetPsycho).Methods(http.MethodGet)
-	r.HandleFunc("/api/psychologist/change/{busymode}", h.UpdateBusyMode).Methods(http.MethodPost)
+	r.HandleFunc("/api/user", handler.UpdateUser).Methods(http.MethodPut)
+	r.HandleFunc("/api/psychologist/{username}", handler.GetPsycho).Methods(http.MethodGet)
+	r.HandleFunc("/api/psychologist/change/{busymode}", handler.UpdateBusyMode).Methods(http.MethodPost)
+
+	//WebSocket Handlers
+	r.HandleFunc("/api/room/{id}", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "main.html")
+	})
+	r.HandleFunc("/api/ws/room/{id}", websocket.GetConnection).Methods(http.MethodGet)
 	return r
 }

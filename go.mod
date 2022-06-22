@@ -5,6 +5,7 @@ go 1.17
 require (
 	cloud.google.com/go/storage v1.22.1
 	github.com/gorilla/mux v1.8.0
+	github.com/gorilla/websocket v1.5.0
 	github.com/lib/pq v1.10.6
 	github.com/satori/go.uuid v1.2.0
 	go.uber.org/zap v1.21.0

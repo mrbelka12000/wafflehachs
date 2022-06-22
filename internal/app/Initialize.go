@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,7 +10,8 @@ import (
 	"syscall"
 	"time"
 	"wafflehacks/database"
-	"wafflehacks/internal/handler"
+	h "wafflehacks/internal/handler/http"
+	ws "wafflehacks/internal/handler/websocket"
 	"wafflehacks/internal/repository"
 	"wafflehacks/internal/server"
 	"wafflehacks/internal/service"
@@ -21,13 +21,6 @@ import (
 	"go.uber.org/zap"
 )
 
-func Initialize(db *sql.DB, log *zap.SugaredLogger) *http.Server {
-	repo := repository.NewRepo(db, log)
-	serv := service.NewService(repo, log)
-	handler := handler.NewHandler(serv, log)
-	return server.NewServer(handler)
-}
-
 func Run(log *zap.SugaredLogger) {
 
 	db, err := database.GetConnection()
@@ -36,14 +29,20 @@ func Run(log *zap.SugaredLogger) {
 		return
 	}
 
+	repo := repository.NewRepo(db, log)
+	srv := service.NewService(repo, log)
+	httpHandler := h.NewHandler(srv, log)
+	wsHandler := ws.NewHandler(srv, log)
+	serv := server.NewServer(httpHandler, wsHandler)
+
+	go wsHandler.Hub.Run()
 	go database.DeleteExpiredCookie(db, log)
 
-	srv := Initialize(db, log)
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
 	go func() {
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := serv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			done <- syscall.SIGQUIT
 			log.Debug(err.Error())
 			return
@@ -75,7 +74,7 @@ func Run(log *zap.SugaredLogger) {
 		cancel()
 	}()
 
-	if err = srv.Shutdown(ctx); err != nil {
+	if err = serv.Shutdown(ctx); err != nil {
 		log.Debugf("Server Shutdown Failed:%+v", err)
 		return
 	}

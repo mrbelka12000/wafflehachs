@@ -1,9 +1,10 @@
-package handler
+package http
 
 import (
 	"fmt"
 	"net/http"
 	request "wafflehacks/entities/requests"
+	"wafflehacks/entities/response"
 	"wafflehacks/models"
 	"wafflehacks/tools"
 	"wafflehacks/tools/storage"
@@ -13,7 +14,7 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	origUser, err := h.getUserId(r)
 	if err != nil {
-		SendErrorResponse(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		response.SendErrorResponse(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
 	r.ParseMultipartForm(10 << 20)
@@ -22,7 +23,7 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	uu, err = uu.BuildRequest(origUser.ID, r)
 	if err != nil {
-		SendErrorResponse(w, err.Error(), 400)
+		response.SendErrorResponse(w, err.Error(), 400)
 		h.log.Debug(err.Error())
 		return
 	}
@@ -30,7 +31,7 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	userUpd := uu.Build()
 	resp := h.srv.UpdateProfile(origUser, userUpd)
 	if resp != nil {
-		SendErrorResponse(w, resp.ErrorMessage, resp.ErrorCode)
+		response.SendErrorResponse(w, resp.ErrorMessage, resp.ErrorCode)
 		h.log.Debug(resp.ErrorMessage)
 		return
 	}
@@ -41,14 +42,14 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 	if !haveError {
 		if handler.Size >= MaxSize {
-			SendErrorResponse(w, "Изображение весит больше чем положено, 20mb", 400)
+			response.SendErrorResponse(w, "Изображение весит больше чем положено, 20mb", 400)
 			h.log.Debug("Слишком большой файл")
 			return
 		}
 		defer file.Close()
 
 		if fileType, ok := tools.IsValidType(file); !ok {
-			SendErrorResponse(w, fmt.Sprintf("Разрешение %v не поддерживается", fileType), 400)
+			response.SendErrorResponse(w, fmt.Sprintf("Разрешение %v не поддерживается", fileType), 400)
 			h.log.Debug(fmt.Sprintf("Разрешение %v не поддерживается", fileType))
 			return
 		}
@@ -58,7 +59,7 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		h.log.Info(origUser.AvatarUrl)
 		if uu.HaveAvater {
 			if err = storage.DeleteFile(tools.GetFileNameFromUrl(origUser.AvatarUrl)); err != nil {
-				SendErrorResponse(w, "Не удалось обновить фотографию", 200)
+				response.SendErrorResponse(w, "Не удалось обновить фотографию", 200)
 				h.log.Debug("Не удалось обновить фотографию: " + err.Error())
 				return
 			}
@@ -67,7 +68,7 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		filename := tools.GetRandomString()
 
 		if err := storage.UploadFile(file, filename); err != nil {
-			SendErrorResponse(w, "Не удалось загрузить файл ", 200)
+			response.SendErrorResponse(w, "Не удалось загрузить файл ", 200)
 			h.log.Debug("Не удалось загрузить файл по причине: " + err.Error())
 			return
 		}
@@ -79,7 +80,7 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if resp := h.srv.ContinueSignUp(csu); resp != nil {
-			SendErrorResponse(w, resp.ErrorMessage, 200)
+			response.SendErrorResponse(w, resp.ErrorMessage, 200)
 			h.log.Debug(resp.ErrorMessage)
 			return
 		}

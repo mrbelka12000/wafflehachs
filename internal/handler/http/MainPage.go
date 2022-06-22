@@ -1,7 +1,8 @@
-package handler
+package http
 
 import (
 	"net/http"
+	"wafflehacks/entities/response"
 	"wafflehacks/tools"
 )
 
@@ -10,7 +11,7 @@ func (h *Handler) MainPage(w http.ResponseWriter, r *http.Request) {
 
 	psychos, resp := h.srv.GetAll()
 	if resp != nil {
-		SendErrorResponse(w, resp.ErrorMessage, resp.ErrorCode)
+		response.SendErrorResponse(w, resp.ErrorMessage, resp.ErrorCode)
 		return
 	}
 
