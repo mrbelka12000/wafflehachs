@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func DeleteExpiredCookie(conn *sql.DB, log *zap.SugaredLogger, ch chan bool) {
+func DeleteExpiredCookie(conn *sql.DB, log *zap.SugaredLogger) {
 	for {
 		_, err := conn.Exec(`
 		DELETE FROM 
@@ -15,7 +15,7 @@ func DeleteExpiredCookie(conn *sql.DB, log *zap.SugaredLogger, ch chan bool) {
 		      	expires_at <now()`)
 		if err != nil {
 			log.Debug(err.Error())
-			ch <- true
+			upTables(conn, log)
 		}
 		time.Sleep(5 * time.Second)
 	}

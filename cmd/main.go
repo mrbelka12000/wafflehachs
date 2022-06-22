@@ -28,9 +28,7 @@ func main() {
 		return
 	}
 
-	ch := make(chan bool)
-	go database.Listener(db, log, ch)
-	go database.DeleteExpiredCookie(db, log, ch)
+	go database.DeleteExpiredCookie(db, log)
 
 	srv := app.Initialize(db, log)
 	done := make(chan os.Signal, 1)
@@ -63,8 +61,6 @@ func main() {
 			log.Info("Temp files removed")
 		}
 
-		close(ch)
-		log.Info("Channels closed")
 		cancel()
 	}()
 
