@@ -2,12 +2,13 @@ package websocket
 
 import (
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
 	"time"
 	"wafflehacks/entities/response"
+
+	"github.com/gorilla/mux"
+	"github.com/gorilla/websocket"
 )
 
 func (h *Handler) GetConnection(w http.ResponseWriter, r *http.Request) {
@@ -17,6 +18,14 @@ func (h *Handler) GetConnection(w http.ResponseWriter, r *http.Request) {
 		response.SendErrorResponse(w, "Не удалось найти айди комнаты", 400)
 		h.log.Debug("Не удалось найти айди комнаты")
 		return
+	}
+
+	if conns, ok := h.Hub.rooms[roomId]; ok {
+		if len(conns) == 2 {
+			response.SendErrorResponse(w, "Комната занята", http.StatusForbidden)
+			h.log.Debug("Комната занята")
+			return
+		}
 	}
 	h.serveWs(w, r, roomId)
 }
