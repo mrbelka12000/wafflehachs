@@ -45,3 +45,9 @@ type ContinueSignUp struct {
 	Description string
 	Avatar      string
 }
+
+type Room struct {
+	Id       string `json:"roomId"`
+	ClientId int    `json:"clientId"`
+	PsychoId int    `json:"psychoId"`
+}

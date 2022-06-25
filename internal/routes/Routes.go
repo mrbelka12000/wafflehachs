@@ -22,10 +22,13 @@ func SetUpMux(handler *h.Handler, websocket *ws.Handler) *mux.Router {
 	r.HandleFunc("/api/psychologist/{username}", handler.GetPsycho).Methods(http.MethodGet)
 	r.HandleFunc("/api/psychologist/change/{busymode}", handler.UpdateBusyMode).Methods(http.MethodPost)
 
+	r.HandleFunc("/api/room/register", nil)
+
 	//WebSocket Handlers
 	r.HandleFunc("/api/room/{id}", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "main.html")
 	})
+
 	r.HandleFunc("/api/ws/room/{id}", websocket.GetConnection).Methods(http.MethodGet)
 	return r
 }

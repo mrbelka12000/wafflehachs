@@ -3,16 +3,17 @@ package websocket
 import (
 	"github.com/gorilla/websocket"
 	"time"
+	"wafflehacks/models"
 )
 
 type message struct {
 	data []byte
-	room string
+	room models.Room
 }
 
 type subscription struct {
 	conn *Connection
-	room string
+	room models.Room
 }
 
 // Hub maintains the set of active connections and broadcasts messages to the

@@ -32,14 +32,23 @@ func (h *Handler) GetConnection(w http.ResponseWriter, r *http.Request) {
 
 // serveWs handles websocket requests from the peer.
 func (h *Handler) serveWs(w http.ResponseWriter, r *http.Request, roomId string) {
-	fmt.Print(roomId)
 	ws, err := h.Upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println(err.Error())
+		response.SendErrorResponse(w, "не удалось обновить соединение", 500)
+		h.log.Debug(err.Error())
 		return
 	}
+
+	_, msg, err := ws.ReadMessage()
+	if err != nil {
+		response.SendErrorResponse(w, "не удалось прочитать сообщение", 400)
+		h.log.Debug("Не удалось прочитать сообщение: " + err.Error())
+		return
+	}
+
+	fmt.Println(string(msg))
 	c := &Connection{send: make(chan []byte, 256), ws: ws}
-	s := subscription{c, roomId}
+	s := subscription{conn: c}
 	h.Hub.register <- s
 	go s.writePump()
 	go s.readPump(h)

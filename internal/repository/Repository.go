@@ -30,12 +30,16 @@ type Session interface {
 	CreateSession(session *m.SessionResponse) *m.ErrorResponse
 	GetUserByCookie(cookie string) (*m.User, *m.ErrorResponse)
 }
+type Room interface {
+	CreateRoom(room *m.Room) *m.ErrorResponse
+}
 
 type Repository struct {
 	Psychologist
 	Client
 	User
 	Session
+	Room
 }
 
 func NewRepo(db *sql.DB, log *zap.SugaredLogger) *Repository {
@@ -44,5 +48,6 @@ func NewRepo(db *sql.DB, log *zap.SugaredLogger) *Repository {
 		Client:       newClient(db, log),
 		User:         newUser(db, log),
 		Session:      newSession(db, log),
+		Room:         newRoom(db, log),
 	}
 }

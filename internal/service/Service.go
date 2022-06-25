@@ -30,11 +30,16 @@ type Session interface {
 	GetUserByCookie(cookie string) (*m.User, *m.ErrorResponse)
 }
 
+type Room interface {
+	CreateRoom(room *m.Room) *m.ErrorResponse
+}
+
 type Service struct {
 	Psychologist
 	Client
 	User
 	Session
+	Room
 }
 
 func NewService(repo *repository.Repository, log *zap.SugaredLogger) *Service {
@@ -43,5 +48,6 @@ func NewService(repo *repository.Repository, log *zap.SugaredLogger) *Service {
 		Client:       newClient(repo, log),
 		User:         newUser(repo, log),
 		Session:      newSession(repo, log),
+		Room:         newRoom(repo, log),
 	}
 }

@@ -22,11 +22,12 @@ import (
 )
 
 func Run(log *zap.SugaredLogger) {
+	done := make(chan os.Signal, 1)
 
 	db, err := database.GetConnection()
 	if err != nil {
 		log.Debug(err.Error())
-		return
+		done <- os.Interrupt
 	}
 
 	repo := repository.NewRepo(db, log)
@@ -38,7 +39,6 @@ func Run(log *zap.SugaredLogger) {
 	go wsHandler.Hub.Run()
 	go database.DeleteExpiredCookie(db, log)
 
-	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
 	go func() {
