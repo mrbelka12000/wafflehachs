@@ -32,11 +32,11 @@ func alseitov(files ...string) {
 			continue
 		}
 		lines := strings.Split(string(bytes), "\n")
-		for i, line := range lines {
+		for _, line := range lines {
 			if len(strings.TrimSpace(line)) > 0 && !strings.HasPrefix(line, "#") {
 				arr := strings.Split(line, "=")
-				if len(arr) != 2 {
-					log.Fatalf("invalid format at line %v\n%v", i+1, line)
+				if len(arr) > 2 {
+					arr[1] += "=" + arr[2]
 				}
 				key, value := arr[0], arr[1]
 				os.Setenv(key, value)
