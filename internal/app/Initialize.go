@@ -23,11 +23,12 @@ import (
 
 func Run(log *zap.SugaredLogger) {
 	done := make(chan os.Signal, 1)
+	tools.Loadenv()
 
 	db, err := database.GetConnection()
 	if err != nil {
 		log.Debug(err.Error())
-		done <- os.Interrupt
+		return
 	}
 
 	repo := repository.NewRepo(db, log)
@@ -49,6 +50,7 @@ func Run(log *zap.SugaredLogger) {
 		}
 	}()
 
+	initGCS()
 	log.Info("Server started on port: " + os.Getenv("PORT"))
 
 	signalFromSystem := <-done
@@ -80,8 +82,7 @@ func Run(log *zap.SugaredLogger) {
 	}
 }
 
-func init() {
-	tools.Loadenv()
+func initGCS() {
 	res := fmt.Sprintf(`
 {
 	"type": "%v",
