@@ -9,6 +9,7 @@ import (
 )
 
 func GetConnection() (*sql.DB, error) {
+	fmt.Println(getConnectionString())
 	db, err := sql.Open("postgres", getConnectionString())
 	if err != nil {
 		return nil, err
